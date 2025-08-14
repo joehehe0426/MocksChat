@@ -1,0 +1,196 @@
+import 'package:flutter/material.dart';
+
+class ReplyCard extends StatelessWidget {
+  const ReplyCard({
+    Key? key, 
+    this.message, 
+    this.time, 
+    this.attachmentType,
+    this.attachmentPath,
+    this.attachmentName,
+  }) : super(key: key);
+  
+  final String? message;
+  final String? time;
+  final String? attachmentType;
+  final String? attachmentPath;
+  final String? attachmentName;
+  
+  Widget _buildAttachment() {
+    if (attachmentType == null || attachmentPath == null) {
+      return SizedBox.shrink();
+    }
+
+    switch (attachmentType) {
+      case 'image':
+        return Container(
+          margin: EdgeInsets.only(bottom: 8),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.asset(
+              attachmentPath!,
+              width: 200,
+              height: 150,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  width: 200,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(Icons.image, size: 50, color: Colors.grey[600]),
+                );
+              },
+            ),
+          ),
+        );
+      
+      case 'document':
+        return Container(
+          margin: EdgeInsets.only(bottom: 8),
+          padding: EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.grey[50],
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey[300]!),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.insert_drive_file, color: Colors.blue, size: 24),
+              SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      attachmentName ?? 'Document',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      'PDF Document',
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      
+      case 'audio':
+        return Container(
+          margin: EdgeInsets.only(bottom: 8),
+          padding: EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.grey[50],
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey[300]!),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.play_circle_filled, color: Colors.green, size: 24),
+              SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      attachmentName ?? 'Audio Message',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      '0:30',
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      
+      default:
+        return SizedBox.shrink();
+    }
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Container(
+          margin: EdgeInsets.symmetric(vertical: 1, horizontal: 8),
+          padding: EdgeInsets.all(6),
+          constraints: BoxConstraints(maxWidth: 250),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(5),
+              topRight: Radius.circular(5),
+              bottomLeft: Radius.circular(5),
+              bottomRight: Radius.circular(5),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 3,
+                offset: Offset(0, 1),
+              ),
+            ],
+          ),
+          child: Stack(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildAttachment(),
+                    if (message != null && message!.isNotEmpty)
+                      RichText(
+                        text: TextSpan(
+                          children: <TextSpan>[
+                            // Real message
+                            TextSpan(
+                              text: (message ?? '') + "    ",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            // Fake timestamp as placeholder (invisible)
+                            TextSpan(
+                              text: time ?? '',
+                              style: TextStyle(
+                                color: Colors.transparent,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              // Real timestamp positioned at bottom right
+              Positioned(
+                child: Text(
+                  time ?? '',
+                  style: TextStyle(
+                    fontSize: 9,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                right: -0.0,
+                bottom: -0.0,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
