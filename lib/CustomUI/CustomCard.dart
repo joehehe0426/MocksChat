@@ -1,5 +1,6 @@
 import 'package:chatapp/Model/ChatModel.dart';
 import 'package:chatapp/Screens/IndividualPage.dart';
+import 'package:chatapp/CustomUI/CachedAvatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'dart:io';
@@ -63,39 +64,13 @@ class CustomCard extends StatelessWidget {
   }
 
   Widget _buildAvatar() {
-    ImageProvider? backgroundImage;
-    if (chatModel!.isGroup == false && chatModel!.profileImage != null) {
-      if (chatModel!.profileImage!.startsWith('assets/')) {
-        backgroundImage = AssetImage(chatModel!.profileImage!);
-      } else {
-        backgroundImage = FileImage(File(chatModel!.profileImage!));
-      }
-    }
-    
-    return CircleAvatar(
+    return CachedAvatar(
+      imagePath: chatModel!.profileImage,
+      fallbackIcon: chatModel!.icon,
       radius: 28,
-      backgroundColor: Colors.grey[300],
-      backgroundImage: backgroundImage,
-      child: chatModel!.isGroup == false
-          ? chatModel!.profileImage == null
-              ? SvgPicture.asset(
-                  "assets/${chatModel!.icon}",
-                  color: Colors.grey[600],
-                  width: 32,
-                  height: 32,
-                )
-              : null
-          : Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(28),
-                color: Color(0xFF075E54),
-              ),
-              child: Icon(
-                Icons.group,
-                color: Colors.white,
-                size: 32,
-              ),
-            ),
+      isGroup: chatModel!.isGroup ?? false,
+      name: chatModel!.name,
+      contactId: chatModel!.id,
     );
   }
 

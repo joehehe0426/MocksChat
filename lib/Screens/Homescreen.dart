@@ -61,7 +61,7 @@ class _HomescreenState extends State<Homescreen> {
 
   Future<void> _loadChatModelsFromDatabase() async {
     try {
-      // Get all contacts from database
+      // Get all contacts from database (now includes profile images)
       List<Map<String, dynamic>> contacts = await _databaseHelper.getAllContacts();
       List<ChatModel> models = [];
       
@@ -70,6 +70,7 @@ class _HomescreenState extends State<Homescreen> {
         String name = contact['name'] ?? 'Unknown';
         String avatar = contact['avatar'] ?? 'person.svg';
         bool isGroup = avatar == 'group.svg';
+        String? profileImage = contact['profileImage'];
         
         // Get the latest message for this contact
         List<MessageModel> messages = await _databaseHelper.getMessages(chatId);
@@ -89,7 +90,7 @@ class _HomescreenState extends State<Homescreen> {
           icon: avatar,
           id: chatId,
           status: isGroup ? 'Group' : 'Online',
-          profileImage: contact['profileImage'],
+          profileImage: profileImage,
         );
         
         models.add(chatModel);
@@ -113,6 +114,10 @@ class _HomescreenState extends State<Homescreen> {
       });
       
       print('Loaded ${models.length} chat models from database');
+      // Debug: Print profile images
+      for (var model in models) {
+        print('Contact: ${model.name}, ProfileImage: ${model.profileImage}');
+      }
     } catch (e) {
       print('Error loading chat models from database: $e');
       // Fallback to passed parameters

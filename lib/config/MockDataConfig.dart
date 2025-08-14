@@ -6,219 +6,303 @@
 
 class MockDataConfig {
   // ========================================
-  // CONTACTS CONFIGURATION
+  // CONTACTS CONFIGURATION - FAMILY MEMBERS & FRIENDS
   // ========================================
   static const List<Map<String, dynamic>> contacts = [
     {
-      'name': '张三',
+      'name': '老豆',
       'phoneNumber': '+86 138 0000 0001',
       'avatar': 'person.svg',
       'status': '在线',
       'profileImage': 'assets/profile_pictures/1.jpg',
     },
     {
-      'name': '李四',
+      'name': '媽',
       'phoneNumber': '+86 138 0000 0002',
       'avatar': 'person.svg',
-      'status': '2小时前在线',
-      'profileImage': 'assets/2.jpeg',
+      'status': '在线',
+      'profileImage': 'assets/profile_pictures/2.jpg',
     },
     {
-      'name': '王五',
+      'name': '哥',
       'phoneNumber': '+86 138 0000 0003',
       'avatar': 'person.svg',
-      'status': '在线',
-      'profileImage': 'assets/3.jpg',
+      'status': '2小时前在线',
+      'profileImage': 'assets/profile_pictures/3.jpg',
     },
     {
-      'name': '陈雅婷',
+      'name': '爺爺',
       'phoneNumber': '+86 138 0000 0004',
       'avatar': 'person.svg',
       'status': '在线',
-      'profileImage': 'assets/balram.jpg',
+      'profileImage': 'assets/profile_pictures/4.jpg',
     },
     {
-      'name': '刘志强',
+      'name': '呀婆',
       'phoneNumber': '+86 138 0000 0005',
       'avatar': 'person.svg',
       'status': '1小时前在线',
-      'profileImage': 'assets/1.png',
+      'profileImage': 'assets/profile_pictures/5.jpg',
     },
     {
-      'name': '黄小华',
+      'name': '呀嫲',
       'phoneNumber': '+86 138 0000 0006',
       'avatar': 'person.svg',
       'status': '在线',
-      'profileImage': 'assets/2.jpeg',
+      'profileImage': 'assets/profile_pictures/6.jpg',
     },
     {
-      'name': '林志明',
+      'name': '梅姨',
       'phoneNumber': '+86 138 0000 0007',
       'avatar': 'person.svg',
       'status': '昨天在线',
-      'profileImage': 'assets/3.jpg',
+      'profileImage': 'assets/profile_pictures/7.jpg',
     },
     {
-      'name': '吴雅芳',
+      'name': '舅父',
       'phoneNumber': '+86 138 0000 0008',
       'avatar': 'person.svg',
       'status': '在线',
-      'profileImage': 'assets/balram.jpg',
+      'profileImage': 'assets/profile_pictures/8.jpg',
     },
     {
-      'name': '赵大伟',
+      'name': '小明',
       'phoneNumber': '+86 138 0000 0009',
       'avatar': 'person.svg',
-      'status': '3小时前在线',
-      'profileImage': 'assets/1.jpg',
+      'status': '在线',
+      'profileImage': 'assets/profile_pictures/9.jpg',
     },
     {
-      'name': '孙丽丽',
+      'name': '小華',
       'phoneNumber': '+86 138 0000 0010',
       'avatar': 'person.svg',
-      'status': '在线',
-      'profileImage': 'assets/2.jpeg',
+      'status': '3小时前在线',
+      'profileImage': 'assets/profile_pictures/10.jpg',
     },
     {
-      'name': '郑志豪',
+      'name': '阿強',
       'phoneNumber': '+86 138 0000 0011',
       'avatar': 'person.svg',
-      'status': '昨天在线',
-      'profileImage': 'assets/3.jpg',
+      'status': '在线',
+      'profileImage': 'assets/profile_pictures/11.jpg',
     },
     {
-      'name': '工作群',
+      'name': '小美',
       'phoneNumber': '+86 138 0000 0012',
-      'avatar': 'group.svg',
-      'status': '12个成员',
+      'avatar': 'person.svg',
+      'status': '昨天在线',
+      'profileImage': 'assets/profile_pictures/12.jpg',
+    },
+    {
+      'name': '阿傑',
+      'phoneNumber': '+86 138 0000 0013',
+      'avatar': 'person.svg',
+      'status': '在线',
+      'profileImage': 'assets/profile_pictures/13.jpg',
+    },
+    {
+      'name': '小麗',
+      'phoneNumber': '+86 138 0000 0014',
+      'avatar': 'person.svg',
+      'status': '1小时前在线',
+      'profileImage': 'assets/profile_pictures/14.jpg',
+    },
+    {
+      'name': '阿偉',
+      'phoneNumber': '+86 138 0000 0015',
+      'avatar': 'person.svg',
+      'status': '在线',
+      'profileImage': 'assets/profile_pictures/15.jpg',
     },
   ];
 
   // ========================================
-  // MESSAGES CONFIGURATION - 1 MONTH OF HISTORY
+  // MESSAGES CONFIGURATION - 1 MONTH OF FAMILY HISTORY
   // ========================================
-  // Format: {'chatId': 1, 'message': 'text', 'type': 'source/destination', 'time': 'HH:MM', 'attachmentType': 'image/document/audio', 'attachmentPath': 'path', 'attachmentName': 'name'}
+  // Format: {'chatId': 1, 'message': 'text', 'type': 'source/destination', 'time': 'HH:MM', 'date': 'YYYY-MM-DD', 'attachmentType': 'image/document/audio', 'attachmentPath': 'path', 'attachmentName': 'name'}
   static const List<Map<String, dynamic>> messages = [
-    // Chat with 张三 (ID: 1) - Recent messages with attachments
-    {'chatId': 1, 'message': '你好，最近怎么样？', 'type': 'destination', 'time': '12:30'},
-    {'chatId': 1, 'message': '我很好，谢谢！你呢？', 'type': 'source', 'time': '12:32'},
-    {'chatId': 1, 'message': '工作很忙，但还不错', 'type': 'destination', 'time': '12:35'},
-    {'chatId': 1, 'message': '那就好，注意休息', 'type': 'source', 'time': '12:37'},
-    {'chatId': 1, 'message': '谢谢关心！', 'type': 'destination', 'time': '12:40'},
-    {'chatId': 1, 'message': '周末一起吃饭吗？', 'type': 'source', 'time': '12:45'},
-    {'chatId': 1, 'message': '好啊，去哪里？', 'type': 'destination', 'time': '12:47'},
-    {'chatId': 1, 'message': '新开的火锅店怎么样？', 'type': 'source', 'time': '12:50'},
-    {'chatId': 1, 'message': '听起来不错！', 'type': 'destination', 'time': '12:52'},
-    {'chatId': 1, 'message': '', 'type': 'source', 'time': '12:55', 'attachmentType': 'image', 'attachmentPath': 'assets/profile_pictures/1.jpg', 'attachmentName': '火锅店照片'},
-    {'chatId': 1, 'message': '看起来很好吃！', 'type': 'destination', 'time': '12:57'},
+    // ========================================
+    // 老豆 (ID: 1) - Work, Health, Family Updates
+    // ========================================
+    {'chatId': 1, 'message': '仔，工作怎麼樣？', 'type': 'destination', 'time': '08:30', 'date': '2024-01-15'},
+    {'chatId': 1, 'message': '還好，最近比較忙', 'type': 'source', 'time': '08:35', 'date': '2024-01-15'},
+    {'chatId': 1, 'message': '注意身體，不要太累', 'type': 'destination', 'time': '08:40', 'date': '2024-01-15'},
+    {'chatId': 1, 'message': '知道，謝謝老豆', 'type': 'source', 'time': '08:45', 'date': '2024-01-15'},
+    {'chatId': 1, 'message': '這個週末回家吃飯嗎？', 'type': 'destination', 'time': '12:00', 'date': '2024-01-16'},
+    {'chatId': 1, 'message': '好啊，我想吃媽煮的菜', 'type': 'source', 'time': '12:05', 'date': '2024-01-16'},
+    {'chatId': 1, 'message': '媽說要煮你最愛的紅燒肉', 'type': 'destination', 'time': '12:10', 'date': '2024-01-16'},
+    {'chatId': 1, 'message': '太好了！', 'type': 'source', 'time': '12:15', 'date': '2024-01-16'},
+    {'chatId': 1, 'message': '', 'type': 'destination', 'time': '18:30', 'date': '2024-01-17', 'attachmentType': 'image', 'attachmentPath': 'assets/profile_pictures/1.jpg', 'attachmentName': '新買的茶葉'},
+    {'chatId': 1, 'message': '這個茶葉不錯，下次帶給你', 'type': 'destination', 'time': '18:32', 'date': '2024-01-17'},
+    {'chatId': 1, 'message': '看起來很好，謝謝老豆', 'type': 'source', 'time': '18:35', 'date': '2024-01-17'},
+    {'chatId': 1, 'message': '身體檢查報告出來了', 'type': 'destination', 'time': '14:20', 'date': '2024-01-18'},
+    {'chatId': 1, 'message': '怎麼樣？', 'type': 'source', 'time': '14:25', 'date': '2024-01-18'},
+    {'chatId': 1, 'message': '一切正常，放心', 'type': 'destination', 'time': '14:30', 'date': '2024-01-18'},
+    {'chatId': 1, 'message': '那就好，注意保重', 'type': 'source', 'time': '14:35', 'date': '2024-01-18'},
+    {'chatId': 1, 'message': '爺爺最近身體不太好', 'type': 'destination', 'time': '20:15', 'date': '2024-01-19'},
+    {'chatId': 1, 'message': '怎麼了？', 'type': 'source', 'time': '20:20', 'date': '2024-01-19'},
+    {'chatId': 1, 'message': '感冒了，我們明天去看他', 'type': 'destination', 'time': '20:25', 'date': '2024-01-19'},
+    {'chatId': 1, 'message': '好的，我也去', 'type': 'source', 'time': '20:30', 'date': '2024-01-19'},
 
-    // Chat with 李四 (ID: 2) - Work related with documents
-    {'chatId': 2, 'message': '明天见！', 'type': 'destination', 'time': '11:45'},
-    {'chatId': 2, 'message': '好的，明天见！', 'type': 'source', 'time': '11:47'},
-    {'chatId': 2, 'message': '记得带文件', 'type': 'destination', 'time': '11:50'},
-    {'chatId': 2, 'message': '好的，我会记得的', 'type': 'source', 'time': '11:52'},
-    {'chatId': 2, 'message': '', 'type': 'source', 'time': '11:53', 'attachmentType': 'document', 'attachmentPath': 'assets/document.pdf', 'attachmentName': '项目报告.pdf'},
-    {'chatId': 2, 'message': '项目进度如何？', 'type': 'destination', 'time': '11:55'},
-    {'chatId': 2, 'message': '按计划进行中', 'type': 'source', 'time': '11:57'},
-    {'chatId': 2, 'message': '有什么问题吗？', 'type': 'destination', 'time': '12:00'},
-    {'chatId': 2, 'message': '暂时没有，一切顺利', 'type': 'source', 'time': '12:02'},
+    // ========================================
+    // 媽 (ID: 2) - Food, Health, Daily Life
+    // ========================================
+    {'chatId': 2, 'message': '仔，吃飯了嗎？', 'type': 'destination', 'time': '12:30', 'date': '2024-01-20'},
+    {'chatId': 2, 'message': '剛吃完，媽你呢？', 'type': 'source', 'time': '12:35', 'date': '2024-01-20'},
+    {'chatId': 2, 'message': '我也剛吃完，今天煮了湯', 'type': 'destination', 'time': '12:40', 'date': '2024-01-20'},
+    {'chatId': 2, 'message': '', 'type': 'destination', 'time': '12:42', 'date': '2024-01-20', 'attachmentType': 'image', 'attachmentPath': 'assets/profile_pictures/2.jpeg', 'attachmentName': '今天的湯'},
+    {'chatId': 2, 'message': '看起來很美味！', 'type': 'source', 'time': '12:45', 'date': '2024-01-20'},
+    {'chatId': 2, 'message': '週末回來煮給你喝', 'type': 'destination', 'time': '12:50', 'date': '2024-01-20'},
+    {'chatId': 2, 'message': '好啊，期待！', 'type': 'source', 'time': '12:55', 'date': '2024-01-20'},
+    {'chatId': 2, 'message': '今天去買菜，菜價又漲了', 'type': 'destination', 'time': '16:20', 'date': '2024-01-21'},
+    {'chatId': 2, 'message': '是啊，什麼都貴了', 'type': 'source', 'time': '16:25', 'date': '2024-01-21'},
+    {'chatId': 2, 'message': '不過還是要買新鮮的', 'type': 'destination', 'time': '16:30', 'date': '2024-01-21'},
+    {'chatId': 2, 'message': '媽，你也要注意身體', 'type': 'source', 'time': '16:35', 'date': '2024-01-21'},
+    {'chatId': 2, 'message': '知道，我會的', 'type': 'destination', 'time': '16:40', 'date': '2024-01-21'},
+    {'chatId': 2, 'message': '今天學會了新的菜譜', 'type': 'destination', 'time': '19:15', 'date': '2024-01-22'},
+    {'chatId': 2, 'message': '什麼菜？', 'type': 'source', 'time': '19:20', 'date': '2024-01-22'},
+    {'chatId': 2, 'message': '麻婆豆腐，下次做給你吃', 'type': 'destination', 'time': '19:25', 'date': '2024-01-22'},
+    {'chatId': 2, 'message': '太好了，我最愛吃豆腐', 'type': 'source', 'time': '19:30', 'date': '2024-01-22'},
+    {'chatId': 2, 'message': '天氣變冷了，記得多穿衣服', 'type': 'destination', 'time': '21:00', 'date': '2024-01-23'},
+    {'chatId': 2, 'message': '知道，媽你也是', 'type': 'source', 'time': '21:05', 'date': '2024-01-23'},
+    {'chatId': 2, 'message': '早點睡覺，不要熬夜', 'type': 'destination', 'time': '22:30', 'date': '2024-01-23'},
+    {'chatId': 2, 'message': '好的，媽晚安', 'type': 'source', 'time': '22:35', 'date': '2024-01-23'},
 
-    // Chat with 王五 (ID: 3) - Project discussion with audio
-    {'chatId': 3, 'message': '工作进展如何？', 'type': 'destination', 'time': '10:20'},
-    {'chatId': 3, 'message': '项目进行得很顺利', 'type': 'source', 'time': '10:25'},
-    {'chatId': 3, 'message': '太好了！', 'type': 'destination', 'time': '10:30'},
-    {'chatId': 3, 'message': '', 'type': 'source', 'time': '10:32', 'attachmentType': 'audio', 'attachmentPath': 'assets/audio.mp3', 'attachmentName': '语音消息'},
-    {'chatId': 3, 'message': '预计下周完成', 'type': 'source', 'time': '10:35'},
-    {'chatId': 3, 'message': '期待看到结果', 'type': 'destination', 'time': '10:40'},
-    {'chatId': 3, 'message': '需要我帮忙吗？', 'type': 'source', 'time': '10:45'},
-    {'chatId': 3, 'message': '暂时不用，谢谢', 'type': 'destination', 'time': '10:47'},
-    {'chatId': 3, 'message': '好的，有需要随时说', 'type': 'source', 'time': '10:50'},
+    // ========================================
+    // 哥 (ID: 3) - Work, Technology, Sports
+    // ========================================
+    {'chatId': 3, 'message': '弟，最近工作怎麼樣？', 'type': 'destination', 'time': '09:00'},
+    {'chatId': 3, 'message': '還好，你呢？', 'type': 'source', 'time': '09:05'},
+    {'chatId': 3, 'message': '忙死了，項目要趕工', 'type': 'destination', 'time': '09:10'},
+    {'chatId': 3, 'message': '加油，注意休息', 'type': 'source', 'time': '09:15'},
+    {'chatId': 3, 'message': '這個週末打籃球嗎？', 'type': 'destination', 'time': '17:30'},
+    {'chatId': 3, 'message': '好啊，幾點？', 'type': 'source', 'time': '17:35'},
+    {'chatId': 3, 'message': '下午3點，老地方', 'type': 'destination', 'time': '17:40'},
+    {'chatId': 3, 'message': '好的，不見不散', 'type': 'source', 'time': '17:45'},
+    {'chatId': 3, 'message': '你看昨晚的球賽了嗎？', 'type': 'destination', 'time': '22:00'},
+    {'chatId': 3, 'message': '看了，太精彩了！', 'type': 'source', 'time': '22:05'},
+    {'chatId': 3, 'message': '那個三分球太厲害了', 'type': 'destination', 'time': '22:10'},
+    {'chatId': 3, 'message': '是啊，絕殺！', 'type': 'source', 'time': '22:15'},
+    {'chatId': 3, 'message': '新手機怎麼樣？', 'type': 'destination', 'time': '14:20'},
+    {'chatId': 3, 'message': '很好用，拍照很清晰', 'type': 'source', 'time': '14:25'},
+    {'chatId': 3, 'message': '', 'type': 'source', 'time': '14:27', 'attachmentType': 'image', 'attachmentPath': 'assets/profile_pictures/3.jpg', 'attachmentName': '新手機拍的'},
+    {'chatId': 3, 'message': '確實很清晰', 'type': 'destination', 'time': '14:30'},
+    {'chatId': 3, 'message': '推薦你也買一個', 'type': 'source', 'time': '14:35'},
+    {'chatId': 3, 'message': '考慮一下', 'type': 'destination', 'time': '14:40'},
 
-    // Chat with 陈雅婷 (ID: 4) - Personal chat with images
-    {'chatId': 4, 'message': '周末有什么计划？', 'type': 'destination', 'time': '09:15'},
-    {'chatId': 4, 'message': '想去看电影', 'type': 'source', 'time': '09:20'},
-    {'chatId': 4, 'message': '什么电影？', 'type': 'destination', 'time': '09:25'},
-    {'chatId': 4, 'message': '新上映的科幻片', 'type': 'source', 'time': '09:30'},
-    {'chatId': 4, 'message': '', 'type': 'source', 'time': '09:31', 'attachmentType': 'image', 'attachmentPath': 'assets/profile_pictures/2.jpeg', 'attachmentName': '电影海报'},
-    {'chatId': 4, 'message': '听起来不错！', 'type': 'destination', 'time': '09:35'},
-    {'chatId': 4, 'message': '要一起去看吗？', 'type': 'source', 'time': '09:40'},
-    {'chatId': 4, 'message': '好啊，几点？', 'type': 'destination', 'time': '09:45'},
-    {'chatId': 4, 'message': '下午3点怎么样？', 'type': 'source', 'time': '09:50'},
+    // ========================================
+    // 爺爺 (ID: 4) - Health, Stories, Family
+    // ========================================
+    {'chatId': 4, 'message': '孫仔，最近好嗎？', 'type': 'destination', 'time': '10:00'},
+    {'chatId': 4, 'message': '爺爺，我很好，你呢？', 'type': 'source', 'time': '10:05'},
+    {'chatId': 4, 'message': '我身體還好，就是有點感冒', 'type': 'destination', 'time': '10:10'},
+    {'chatId': 4, 'message': '爺爺要保重身體', 'type': 'source', 'time': '10:15'},
+    {'chatId': 4, 'message': '知道，我會的', 'type': 'destination', 'time': '10:20'},
+    {'chatId': 4, 'message': '今天去公園散步了', 'type': 'destination', 'time': '16:00'},
+    {'chatId': 4, 'message': '好啊，天氣不錯', 'type': 'source', 'time': '16:05'},
+    {'chatId': 4, 'message': '遇到老朋友，聊了很久', 'type': 'destination', 'time': '16:10'},
+    {'chatId': 4, 'message': '那很好啊', 'type': 'source', 'time': '16:15'},
+    {'chatId': 4, 'message': '記得小時候的故事嗎？', 'type': 'destination', 'time': '20:30'},
+    {'chatId': 4, 'message': '記得，爺爺經常講給我聽', 'type': 'source', 'time': '20:35'},
+    {'chatId': 4, 'message': '那些都是珍貴的回憶', 'type': 'destination', 'time': '20:40'},
+    {'chatId': 4, 'message': '是啊，謝謝爺爺', 'type': 'source', 'time': '20:45'},
+    {'chatId': 4, 'message': '這個週末來看我嗎？', 'type': 'destination', 'time': '11:30'},
+    {'chatId': 4, 'message': '好啊，我帶些水果去', 'type': 'source', 'time': '11:35'},
+    {'chatId': 4, 'message': '不用帶東西，來就好', 'type': 'destination', 'time': '11:40'},
+    {'chatId': 4, 'message': '爺爺，早點休息', 'type': 'source', 'time': '21:00'},
+    {'chatId': 4, 'message': '好的，孫仔晚安', 'type': 'destination', 'time': '21:05'},
 
-    // Chat with 刘志强 (ID: 5) - Technical discussion
-    {'chatId': 5, 'message': '代码审查完成了吗？', 'type': 'destination', 'time': '08:30'},
-    {'chatId': 5, 'message': '已经完成了', 'type': 'source', 'time': '08:35'},
-    {'chatId': 5, 'message': '有什么问题吗？', 'type': 'destination', 'time': '08:40'},
-    {'chatId': 5, 'message': '有几个小问题需要修改', 'type': 'source', 'time': '08:45'},
-    {'chatId': 5, 'message': '什么时候能改完？', 'type': 'destination', 'time': '08:50'},
-    {'chatId': 5, 'message': '今天下午就能完成', 'type': 'source', 'time': '08:55'},
-    {'chatId': 5, 'message': '好的，辛苦了', 'type': 'destination', 'time': '09:00'},
+    // ========================================
+    // 呀婆 (ID: 5) - Cooking, Health, Family News
+    // ========================================
+    {'chatId': 5, 'message': '孫仔，吃飯了嗎？', 'type': 'destination', 'time': '12:00'},
+    {'chatId': 5, 'message': '呀婆，剛吃完', 'type': 'source', 'time': '12:05'},
+    {'chatId': 5, 'message': '今天煮了湯，很補的', 'type': 'destination', 'time': '12:10'},
+    {'chatId': 5, 'message': '謝謝呀婆', 'type': 'source', 'time': '12:15'},
+    {'chatId': 5, 'message': '身體怎麼樣？', 'type': 'destination', 'time': '15:30'},
+    {'chatId': 5, 'message': '還好，呀婆你呢？', 'type': 'source', 'time': '15:35'},
+    {'chatId': 5, 'message': '我身體還好，就是膝蓋有點痛', 'type': 'destination', 'time': '15:40'},
+    {'chatId': 5, 'message': '呀婆要小心，不要走太多', 'type': 'source', 'time': '15:45'},
+    {'chatId': 5, 'message': '知道，我會注意的', 'type': 'destination', 'time': '15:50'},
+    {'chatId': 5, 'message': '今天學會了新的菜', 'type': 'destination', 'time': '18:00'},
+    {'chatId': 5, 'message': '什麼菜？', 'type': 'source', 'time': '18:05'},
+    {'chatId': 5, 'message': '紅燒魚，下次做給你吃', 'type': 'destination', 'time': '18:10'},
+    {'chatId': 5, 'message': '太好了，我最愛吃魚', 'type': 'source', 'time': '18:15'},
+    {'chatId': 5, 'message': '天氣變冷了', 'type': 'destination', 'time': '20:00'},
+    {'chatId': 5, 'message': '是啊，呀婆要多穿衣服', 'type': 'source', 'time': '20:05'},
+    {'chatId': 5, 'message': '知道，你也是', 'type': 'destination', 'time': '20:10'},
+    {'chatId': 5, 'message': '呀婆，早點休息', 'type': 'source', 'time': '21:30'},
+    {'chatId': 5, 'message': '好的，孫仔晚安', 'type': 'destination', 'time': '21:35'},
 
-    // Chat with 黄小华 (ID: 6) - Design feedback
-    {'chatId': 6, 'message': 'UI设计稿看过了吗？', 'type': 'destination', 'time': '07:45'},
-    {'chatId': 6, 'message': '看过了，整体不错', 'type': 'source', 'time': '07:50'},
-    {'chatId': 6, 'message': '有什么建议吗？', 'type': 'destination', 'time': '07:55'},
-    {'chatId': 6, 'message': '颜色搭配可以再调整一下', 'type': 'source', 'time': '08:00'},
-    {'chatId': 6, 'message': '好的，我修改一下', 'type': 'destination', 'time': '08:05'},
-    {'chatId': 6, 'message': '谢谢反馈', 'type': 'source', 'time': '08:10'},
-    {'chatId': 6, 'message': '不客气', 'type': 'destination', 'time': '08:15'},
+    // ========================================
+    // 呀嫲 (ID: 6) - Health, Family, Daily Life
+    // ========================================
+    {'chatId': 6, 'message': '孫仔，最近好嗎？', 'type': 'destination', 'time': '09:30'},
+    {'chatId': 6, 'message': '呀嫲，我很好，你呢？', 'type': 'source', 'time': '09:35'},
+    {'chatId': 6, 'message': '我身體還好，就是有點累', 'type': 'destination', 'time': '09:40'},
+    {'chatId': 6, 'message': '呀嫲要多休息', 'type': 'source', 'time': '09:45'},
+    {'chatId': 6, 'message': '知道，我會的', 'type': 'destination', 'time': '09:50'},
+    {'chatId': 6, 'message': '今天去買菜了', 'type': 'destination', 'time': '14:00'},
+    {'chatId': 6, 'message': '買了什麼？', 'type': 'source', 'time': '14:05'},
+    {'chatId': 6, 'message': '買了魚和青菜', 'type': 'destination', 'time': '14:10'},
+    {'chatId': 6, 'message': '好啊，營養均衡', 'type': 'source', 'time': '14:15'},
+    {'chatId': 6, 'message': '今天天氣不錯', 'type': 'destination', 'time': '16:30'},
+    {'chatId': 6, 'message': '是啊，適合散步', 'type': 'source', 'time': '16:35'},
+    {'chatId': 6, 'message': '我去公園走了一圈', 'type': 'destination', 'time': '16:40'},
+    {'chatId': 6, 'message': '很好，呀嫲要堅持運動', 'type': 'source', 'time': '16:45'},
+    {'chatId': 6, 'message': '知道，我會的', 'type': 'destination', 'time': '16:50'},
+    {'chatId': 6, 'message': '這個週末來看我嗎？', 'type': 'destination', 'time': '19:00'},
+    {'chatId': 6, 'message': '好啊，我帶些水果去', 'type': 'source', 'time': '19:05'},
+    {'chatId': 6, 'message': '不用帶東西，來就好', 'type': 'destination', 'time': '19:10'},
+    {'chatId': 6, 'message': '呀嫲，早點休息', 'type': 'source', 'time': '21:00'},
+    {'chatId': 6, 'message': '好的，孫仔晚安', 'type': 'destination', 'time': '21:05'},
 
-    // Chat with 林志明 (ID: 7) - Testing discussion
-    {'chatId': 7, 'message': '测试用例写好了吗？', 'type': 'destination', 'time': '06:30'},
-    {'chatId': 7, 'message': '已经写好了', 'type': 'source', 'time': '06:35'},
-    {'chatId': 7, 'message': '覆盖率怎么样？', 'type': 'destination', 'time': '06:40'},
-    {'chatId': 7, 'message': '达到85%以上', 'type': 'source', 'time': '06:45'},
-    {'chatId': 7, 'message': '很好，继续努力', 'type': 'destination', 'time': '06:50'},
-    {'chatId': 7, 'message': '谢谢鼓励', 'type': 'source', 'time': '06:55'},
-    {'chatId': 7, 'message': '应该的', 'type': 'destination', 'time': '07:00'},
+    // ========================================
+    // 梅姨 (ID: 7) - Work, Travel, Family News
+    // ========================================
+    {'chatId': 7, 'message': '姪仔，最近工作怎麼樣？', 'type': 'destination', 'time': '10:00'},
+    {'chatId': 7, 'message': '梅姨，還好，你呢？', 'type': 'source', 'time': '10:05'},
+    {'chatId': 7, 'message': '我工作很忙，經常出差', 'type': 'destination', 'time': '10:10'},
+    {'chatId': 7, 'message': '梅姨要保重身體', 'type': 'source', 'time': '10:15'},
+    {'chatId': 7, 'message': '知道，我會的', 'type': 'destination', 'time': '10:20'},
+    {'chatId': 7, 'message': '這個月要去上海出差', 'type': 'destination', 'time': '15:00'},
+    {'chatId': 7, 'message': '去多久？', 'type': 'source', 'time': '15:05'},
+    {'chatId': 7, 'message': '一個星期', 'type': 'destination', 'time': '15:10'},
+    {'chatId': 7, 'message': '注意安全', 'type': 'source', 'time': '15:15'},
+    {'chatId': 7, 'message': '知道，謝謝關心', 'type': 'destination', 'time': '15:20'},
+    {'chatId': 7, 'message': '今天買了新衣服', 'type': 'destination', 'time': '18:00'},
+    {'chatId': 7, 'message': '什麼顏色的？', 'type': 'source', 'time': '18:05'},
+    {'chatId': 7, 'message': '藍色的，很漂亮', 'type': 'destination', 'time': '18:10'},
+    {'chatId': 7, 'message': '', 'type': 'destination', 'time': '18:12', 'attachmentType': 'image', 'attachmentPath': 'assets/profile_pictures/balram.jpg', 'attachmentName': '新衣服'},
+    {'chatId': 7, 'message': '確實很漂亮', 'type': 'source', 'time': '18:15'},
+    {'chatId': 7, 'message': '謝謝', 'type': 'destination', 'time': '18:20'},
+    {'chatId': 7, 'message': '這個週末回家嗎？', 'type': 'destination', 'time': '20:00'},
+    {'chatId': 7, 'message': '應該會，梅姨呢？', 'type': 'source', 'time': '20:05'},
+    {'chatId': 7, 'message': '我也會回去', 'type': 'destination', 'time': '20:10'},
+    {'chatId': 7, 'message': '那到時候見', 'type': 'source', 'time': '20:15'},
 
-    // Chat with 吴雅芳 (ID: 8) - HR related with birthday photo
-    {'chatId': 8, 'message': '生日快乐！🎉', 'type': 'destination', 'time': '05:15'},
-    {'chatId': 8, 'message': '谢谢！', 'type': 'source', 'time': '05:20'},
-    {'chatId': 8, 'message': '有什么庆祝计划吗？', 'type': 'destination', 'time': '05:25'},
-    {'chatId': 8, 'message': '和家人一起吃饭', 'type': 'source', 'time': '05:30'},
-    {'chatId': 8, 'message': '', 'type': 'source', 'time': '05:32', 'attachmentType': 'image', 'attachmentPath': 'assets/profile_pictures/3.jpg', 'attachmentName': '生日蛋糕'},
-    {'chatId': 8, 'message': '听起来很棒！', 'type': 'destination', 'time': '05:35'},
-    {'chatId': 8, 'message': '是的，很期待', 'type': 'source', 'time': '05:40'},
-    {'chatId': 8, 'message': '祝你生日快乐！', 'type': 'destination', 'time': '05:45'},
-
-    // Chat with 赵大伟 (ID: 9) - Architecture discussion
-    {'chatId': 9, 'message': '系统架构设计完成了吗？', 'type': 'destination', 'time': '04:20'},
-    {'chatId': 9, 'message': '基本完成了', 'type': 'source', 'time': '04:25'},
-    {'chatId': 9, 'message': '有什么技术难点吗？', 'type': 'destination', 'time': '04:30'},
-    {'chatId': 9, 'message': '性能优化方面需要深入研究', 'type': 'source', 'time': '04:35'},
-    {'chatId': 9, 'message': '需要我协助吗？', 'type': 'destination', 'time': '04:40'},
-    {'chatId': 9, 'message': '暂时不用，我先研究一下', 'type': 'source', 'time': '04:45'},
-    {'chatId': 9, 'message': '好的，有需要随时说', 'type': 'destination', 'time': '04:50'},
-
-    // Chat with 孙丽丽 (ID: 10) - Marketing discussion
-    {'chatId': 10, 'message': '市场调研报告完成了吗？', 'type': 'destination', 'time': '03:10'},
-    {'chatId': 10, 'message': '已经完成了', 'type': 'source', 'time': '03:15'},
-    {'chatId': 10, 'message': '主要发现是什么？', 'type': 'destination', 'time': '03:20'},
-    {'chatId': 10, 'message': '用户对产品功能很满意', 'type': 'source', 'time': '03:25'},
-    {'chatId': 10, 'message': '太好了！', 'type': 'destination', 'time': '03:30'},
-    {'chatId': 10, 'message': '还有什么改进建议吗？', 'type': 'source', 'time': '03:35'},
-    {'chatId': 10, 'message': '界面可以更简洁一些', 'type': 'destination', 'time': '03:40'},
-
-    // Chat with 郑志豪 (ID: 11) - Sales discussion
-    {'chatId': 11, 'message': '销售目标完成得怎么样？', 'type': 'destination', 'time': '02:00'},
-    {'chatId': 11, 'message': '超额完成了10%', 'type': 'source', 'time': '02:05'},
-    {'chatId': 11, 'message': '太棒了！', 'type': 'destination', 'time': '02:10'},
-    {'chatId': 11, 'message': '谢谢团队的支持', 'type': 'source', 'time': '02:15'},
-    {'chatId': 11, 'message': '继续加油！', 'type': 'destination', 'time': '02:20'},
-    {'chatId': 11, 'message': '一定会的', 'type': 'source', 'time': '02:25'},
-    {'chatId': 11, 'message': '下个月的目标定了吗？', 'type': 'destination', 'time': '02:30'},
-
-    // Work Group Chat (ID: 12)
-    {'chatId': 12, 'message': '下午3点开会', 'type': 'destination', 'time': '09:15'},
-    {'chatId': 12, 'message': '收到', 'type': 'source', 'time': '09:20'},
-    {'chatId': 12, 'message': '好的，我会准时参加', 'type': 'source', 'time': '09:22'},
-    {'chatId': 12, 'message': '请准备项目报告', 'type': 'destination', 'time': '09:25'},
-    {'chatId': 12, 'message': '已经准备好了', 'type': 'source', 'time': '09:30'},
-    {'chatId': 12, 'message': '很好，大家辛苦了', 'type': 'destination', 'time': '09:35'},
-    {'chatId': 12, 'message': '会议地点在哪里？', 'type': 'source', 'time': '09:40'},
-    {'chatId': 12, 'message': '会议室A', 'type': 'destination', 'time': '09:45'},
-    {'chatId': 12, 'message': '好的，知道了', 'type': 'source', 'time': '09:50'},
+    // ========================================
+    // 舅父 (ID: 8) - Business, Investment, Family
+    // ========================================
+    {'chatId': 8, 'message': '姪仔，最近怎麼樣？', 'type': 'destination', 'time': '11:00'},
+    {'chatId': 8, 'message': '舅父，還好，你呢？', 'type': 'source', 'time': '11:05'},
+    {'chatId': 8, 'message': '我生意還不錯', 'type': 'destination', 'time': '11:10'},
+    {'chatId': 8, 'message': '那就好', 'type': 'source', 'time': '11:15'},
+    {'chatId': 8, 'message': '最近有什麼投資機會嗎？', 'type': 'destination', 'time': '14:30'},
+    {'chatId': 8, 'message': '我不太懂投資', 'type': 'source', 'time': '14:35'},
+    {'chatId': 8, 'message': '可以學習一下', 'type': 'destination', 'time': '14:40'},
+    {'chatId': 8, 'message': '好的，有機會請教舅父', 'type': 'source', 'time': '14:45'},
+    {'chatId': 8, 'message': '今天去見客戶了', 'type': 'destination', 'time': '17:00'},
+    {'chatId': 8, 'message': '談得怎麼樣？', 'type': 'source', 'time': '17:05'},
+    {'chatId': 8, 'message': '還不錯，有希望合作', 'type': 'destination', 'time': '17:10'},
+    {'chatId': 8, 'message': '恭喜舅父', 'type': 'source', 'time': '17:15'},
+    {'chatId': 8, 'message': '謝謝', 'type': 'destination', 'time': '17:20'},
+    {'chatId': 8, 'message': '這個週末有時間嗎？', 'type': 'destination', 'time': '19:30'},
+    {'chatId': 8, 'message': '有，舅父有什麼事？', 'type': 'source', 'time': '19:35'},
+    {'chatId': 8, 'message': '想請你吃飯', 'type': 'destination', 'time': '19:40'},
+    {'chatId': 8, 'message': '好啊，謝謝舅父', 'type': 'source', 'time': '19:45'},
+    {'chatId': 8, 'message': '到時候聯繫', 'type': 'destination', 'time': '19:50'},
+    {'chatId': 8, 'message': '好的', 'type': 'source', 'time': '19:55'},
   ];
 
   // ========================================
@@ -228,75 +312,51 @@ class MockDataConfig {
   static const List<Map<String, dynamic>> chatSessions = [
     {
       'chatId': 1,
-      'lastMessage': '新开的火锅店怎么样？',
-      'lastMessageTime': '12:50',
+      'lastMessage': '這個週末回家吃飯嗎？',
+      'lastMessageTime': '12:00',
       'unreadCount': 0,
     },
     {
       'chatId': 2,
-      'lastMessage': '暂时没有，一切顺利',
-      'lastMessageTime': '12:02',
+      'lastMessage': '早點睡覺，不要熬夜',
+      'lastMessageTime': '22:35',
       'unreadCount': 1,
     },
     {
       'chatId': 3,
-      'lastMessage': '好的，有需要随时说',
-      'lastMessageTime': '10:50',
+      'lastMessage': '考慮一下',
+      'lastMessageTime': '14:40',
       'unreadCount': 0,
     },
     {
       'chatId': 4,
-      'lastMessage': '下午3点怎么样？',
-      'lastMessageTime': '09:50',
+      'lastMessage': '爺爺，早點休息',
+      'lastMessageTime': '21:00',
       'unreadCount': 2,
     },
     {
       'chatId': 5,
-      'lastMessage': '好的，辛苦了',
-      'lastMessageTime': '09:00',
+      'lastMessage': '呀婆，早點休息',
+      'lastMessageTime': '21:35',
       'unreadCount': 0,
     },
     {
       'chatId': 6,
-      'lastMessage': '不客气',
-      'lastMessageTime': '08:15',
+      'lastMessage': '呀嫲，早點休息',
+      'lastMessageTime': '21:05',
       'unreadCount': 1,
     },
     {
       'chatId': 7,
-      'lastMessage': '应该的',
-      'lastMessageTime': '07:00',
+      'lastMessage': '這個週末回家嗎？',
+      'lastMessageTime': '20:00',
       'unreadCount': 0,
     },
     {
       'chatId': 8,
-      'lastMessage': '祝你生日快乐！',
-      'lastMessageTime': '05:45',
+      'lastMessage': '到時候聯繫',
+      'lastMessageTime': '19:50',
       'unreadCount': 3,
-    },
-    {
-      'chatId': 9,
-      'lastMessage': '好的，有需要随时说',
-      'lastMessageTime': '04:50',
-      'unreadCount': 0,
-    },
-    {
-      'chatId': 10,
-      'lastMessage': '界面可以更简洁一些',
-      'lastMessageTime': '03:40',
-      'unreadCount': 1,
-    },
-    {
-      'chatId': 11,
-      'lastMessage': '下个月的目标定了吗？',
-      'lastMessageTime': '02:30',
-      'unreadCount': 0,
-    },
-    {
-      'chatId': 12,
-      'lastMessage': '好的，知道了',
-      'lastMessageTime': '09:50',
-      'unreadCount': 5,
     },
   ];
 
@@ -304,6 +364,11 @@ class MockDataConfig {
   // CONFIGURATION SETTINGS
   // ========================================
   static const bool enableMockData = true;
-  static const bool clearExistingData = true;
+  // ========================================
+  // DATABASE CONFIGURATION
+  // ========================================
+  // Set to true to clear existing data and re-seed with new mock data
+  // Set to false to keep existing data
+  static const bool clearExistingData = true; // Force clear to fix chat history
   static const bool showDebugLogs = true;
 }

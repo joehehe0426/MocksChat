@@ -35,6 +35,7 @@ class DatabaseHelper {
         message TEXT NOT NULL,
         type TEXT NOT NULL,
         time TEXT NOT NULL,
+        date TEXT,
         timestamp INTEGER NOT NULL,
         attachmentType TEXT,
         attachmentPath TEXT,
@@ -80,6 +81,7 @@ class DatabaseHelper {
         'message': message.message ?? '',
         'type': message.type ?? 'source',
         'time': message.time ?? '',
+        'date': message.date ?? DateTime.now().toIso8601String().split('T')[0],
         'timestamp': DateTime.now().millisecondsSinceEpoch,
         'attachmentType': message.attachmentType,
         'attachmentPath': message.attachmentPath,
@@ -99,7 +101,7 @@ class DatabaseHelper {
         'messages',
         where: 'chatId = ?',
         whereArgs: [chatId],
-        orderBy: 'timestamp DESC',
+        orderBy: 'timestamp ASC', // Changed to ASC for chronological order
         limit: limit,
         offset: offset,
       );
@@ -109,14 +111,45 @@ class DatabaseHelper {
           type: maps[i]['type'],
           message: maps[i]['message'],
           time: maps[i]['time'],
+          date: maps[i]['date'],
           attachmentType: maps[i]['attachmentType'],
           attachmentPath: maps[i]['attachmentPath'],
           attachmentName: maps[i]['attachmentName'],
         );
-      }).reversed.toList(); // Return in chronological order
+      }); // No need to reverse since we're using ASC order
     } catch (e) {
       print('Error getting messages: $e');
       return [];
+    }
+  }
+
+  // Get the last message for a specific chat
+  Future<MessageModel?> getLastMessage(int chatId) async {
+    try {
+      final db = await database;
+      final List<Map<String, dynamic>> maps = await db.query(
+        'messages',
+        where: 'chatId = ?',
+        whereArgs: [chatId],
+        orderBy: 'timestamp DESC',
+        limit: 1,
+      );
+
+      if (maps.isNotEmpty) {
+        return MessageModel(
+          type: maps.first['type'],
+          message: maps.first['message'],
+          time: maps.first['time'],
+          date: maps.first['date'],
+          attachmentType: maps.first['attachmentType'],
+          attachmentPath: maps.first['attachmentPath'],
+          attachmentName: maps.first['attachmentName'],
+        );
+      }
+      return null;
+    } catch (e) {
+      print('Error getting last message: $e');
+      return null;
     }
   }
 
@@ -283,10 +316,23 @@ class DatabaseHelper {
   Future<List<Map<String, dynamic>>> getAllContacts() async {
     try {
       final db = await database;
-      return await db.query(
-        'contacts',
-        orderBy: 'name ASC',
-      );
+      
+      // Join contacts with chat_sessions to get profile images
+      final List<Map<String, dynamic>> maps = await db.rawQuery('''
+        SELECT 
+          c.id,
+          c.name,
+          c.phoneNumber,
+          c.avatar,
+          c.isFavorite,
+          c.timestamp,
+          cs.profileImage
+        FROM contacts c
+        LEFT JOIN chat_sessions cs ON c.id = cs.chatId
+        ORDER BY c.name ASC
+      ''');
+
+      return maps;
     } catch (e) {
       print('Error getting all contacts: $e');
       return [];

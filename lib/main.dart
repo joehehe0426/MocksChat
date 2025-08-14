@@ -1,9 +1,13 @@
 import 'package:chatapp/Model/ChatModel.dart';
 import 'package:chatapp/Screens/Homescreen.dart';
+import 'package:chatapp/database/DatabaseSeeder.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Seed the database with initial data including profile images
+  await DatabaseSeeder.seedDatabase();
   
   runApp(MyApp());
 }

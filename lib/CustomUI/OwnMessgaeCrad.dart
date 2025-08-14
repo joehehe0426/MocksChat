@@ -16,7 +16,48 @@ class OwnMessageCard extends StatelessWidget {
   final String? attachmentPath;
   final String? attachmentName;
   
-  Widget _buildAttachment() {
+  void _showFullScreenImage(BuildContext context, String imagePath) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => Scaffold(
+          backgroundColor: Colors.black,
+          appBar: AppBar(
+            backgroundColor: Colors.black,
+            iconTheme: IconThemeData(color: Colors.white),
+            title: Text('Image', style: TextStyle(color: Colors.white)),
+          ),
+          body: Center(
+            child: InteractiveViewer(
+              child: Image.asset(
+                imagePath,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: Colors.grey[900],
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.image, size: 100, color: Colors.grey[600]),
+                          SizedBox(height: 16),
+                          Text(
+                            'Image not found',
+                            style: TextStyle(color: Colors.grey[400]),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAttachment(BuildContext context) {
     if (attachmentType == null || attachmentPath == null) {
       return SizedBox.shrink();
     }
@@ -25,24 +66,29 @@ class OwnMessageCard extends StatelessWidget {
       case 'image':
         return Container(
           margin: EdgeInsets.only(bottom: 8),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.asset(
-              attachmentPath!,
-              width: 200,
-              height: 150,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  width: 200,
-                  height: 150,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(Icons.image, size: 50, color: Colors.grey[600]),
-                );
-              },
+          child: GestureDetector(
+            onTap: () {
+              _showFullScreenImage(context, attachmentPath!);
+            },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset(
+                attachmentPath!,
+                width: 200,
+                height: 150,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: 200,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(Icons.image, size: 50, color: Colors.grey[600]),
+                  );
+                },
+              ),
             ),
           ),
         );
@@ -148,7 +194,7 @@ class OwnMessageCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildAttachment(),
+                                         _buildAttachment(context),
                     if (message != null && message!.isNotEmpty)
                       RichText(
                         text: TextSpan(

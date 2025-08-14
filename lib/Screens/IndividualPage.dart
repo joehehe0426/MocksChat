@@ -1,5 +1,7 @@
 import 'package:chatapp/CustomUI/OwnMessgaeCrad.dart';
 import 'package:chatapp/CustomUI/ReplyCard.dart';
+import 'package:chatapp/CustomUI/DateHeader.dart';
+import 'package:chatapp/CustomUI/CachedAvatar.dart';
 import 'package:chatapp/Model/ChatModel.dart';
 import 'package:chatapp/Model/MessageModel.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
@@ -23,6 +25,7 @@ class _IndividualPageState extends State<IndividualPage> {
   FocusNode focusNode = FocusNode();
   bool sendButton = false;
   List<MessageModel> messages = [];
+  List<dynamic> chatItems = []; // Will contain messages and date headers
   TextEditingController _controller = TextEditingController();
   ScrollController _scrollController = ScrollController();
   String? selectedProfileImage;
@@ -70,6 +73,7 @@ class _IndividualPageState extends State<IndividualPage> {
     } else {
       setState(() {
         messages = dbMessages;
+        _groupMessagesByDate();
       });
     }
   }
@@ -89,6 +93,26 @@ class _IndividualPageState extends State<IndividualPage> {
     messages = [];
   }
 
+  void _groupMessagesByDate() {
+    chatItems.clear();
+    if (messages.isEmpty) return;
+
+    String? currentDate;
+    
+    for (MessageModel message in messages) {
+      String messageDate = message.date ?? DateTime.now().toIso8601String().split('T')[0];
+      
+      // Add date header if it's a new date
+      if (currentDate != messageDate) {
+        currentDate = messageDate;
+        chatItems.add({'type': 'date_header', 'date': messageDate});
+      }
+      
+      // Add message
+      chatItems.add({'type': 'message', 'message': message});
+    }
+  }
+
   Future<void> sendMessage(String message, int sourceId, int targetId) async {
     await setMessage("source", message);
     // For educational purposes, we don't need real-time messaging
@@ -99,11 +123,13 @@ class _IndividualPageState extends State<IndividualPage> {
     MessageModel messageModel = MessageModel(
         type: type,
         message: message,
-        time: DateTime.now().toString().substring(10, 16));
+        time: DateTime.now().toString().substring(10, 16),
+        date: DateTime.now().toIso8601String().split('T')[0]);
     print(messages);
 
     setState(() {
       messages.add(messageModel);
+      _groupMessagesByDate();
     });
 
     // Save to database
@@ -281,22 +307,13 @@ class _IndividualPageState extends State<IndividualPage> {
                 onTap: () {
                   _showProfileOptions();
                 },
-                child: CircleAvatar(
-                  backgroundImage: selectedProfileImage != null 
-                      ? FileImage(File(selectedProfileImage!))
-                      : null,
-                  child: selectedProfileImage == null
-                      ? SvgPicture.asset(
-                          widget.chatModel?.isGroup == true
-                              ? "assets/groups.svg"
-                              : "assets/person.svg",
-                          colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
-                          height: 36,
-                          width: 36,
-                        )
-                      : null,
+                child: CachedAvatar(
+                  imagePath: selectedProfileImage,
+                  fallbackIcon: widget.chatModel?.isGroup == true ? "groups.svg" : "person.svg",
                   radius: 20,
-                  backgroundColor: selectedProfileImage == null ? Colors.blueGrey : null,
+                  isGroup: widget.chatModel?.isGroup ?? false,
+                  name: widget.chatModel?.name,
+                  contactId: widget.chatModel?.id,
                 ),
               ),
             ],
@@ -365,28 +382,38 @@ class _IndividualPageState extends State<IndividualPage> {
                 child: ListView.builder(
                   shrinkWrap: true,
                   controller: _scrollController,
-                  itemCount: messages.length + 1,
+                  itemCount: chatItems.length + 1,
                   itemBuilder: (context, index) {
-                    if (index == messages.length) {
+                    if (index == chatItems.length) {
                       return Container(height: 100);
                     }
-                    if (messages[index].type == "source") {
-                      return OwnMessageCard(
-                        message: messages[index].message,
-                        time: messages[index].time,
-                        attachmentType: messages[index].attachmentType,
-                        attachmentPath: messages[index].attachmentPath,
-                        attachmentName: messages[index].attachmentName,
-                      );
-                    } else {
-                      return ReplyCard(
-                        message: messages[index].message,
-                        time: messages[index].time,
-                        attachmentType: messages[index].attachmentType,
-                        attachmentPath: messages[index].attachmentPath,
-                        attachmentName: messages[index].attachmentName,
-                      );
+                    
+                    var item = chatItems[index];
+                    
+                    if (item['type'] == 'date_header') {
+                      return DateHeader(date: item['date']);
+                    } else if (item['type'] == 'message') {
+                      MessageModel message = item['message'];
+                      if (message.type == "source") {
+                        return OwnMessageCard(
+                          message: message.message,
+                          time: message.time,
+                          attachmentType: message.attachmentType,
+                          attachmentPath: message.attachmentPath,
+                          attachmentName: message.attachmentName,
+                        );
+                      } else {
+                        return ReplyCard(
+                          message: message.message,
+                          time: message.time,
+                          attachmentType: message.attachmentType,
+                          attachmentPath: message.attachmentPath,
+                          attachmentName: message.attachmentName,
+                        );
+                      }
                     }
+                    
+                    return Container(); // Fallback
                   },
                 ),
               ),
@@ -640,10 +667,12 @@ class _IndividualPageState extends State<IndividualPage> {
         type: "source",
         message: "",
         time: _getCurrentTime(),
+        date: DateTime.now().toIso8601String().split('T')[0],
         attachmentType: attachmentType,
         attachmentPath: attachmentPath,
         attachmentName: attachmentName,
       ));
+      _groupMessagesByDate();
     });
     
     // Save to database
@@ -652,6 +681,7 @@ class _IndividualPageState extends State<IndividualPage> {
         type: "source",
         message: "",
         time: _getCurrentTime(),
+        date: DateTime.now().toIso8601String().split('T')[0],
         attachmentType: attachmentType,
         attachmentPath: attachmentPath,
         attachmentName: attachmentName,
