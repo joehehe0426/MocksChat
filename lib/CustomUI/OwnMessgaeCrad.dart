@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 
 class OwnMessageCard extends StatelessWidget {
   const OwnMessageCard({
-    Key? key, 
-    this.message, 
-    this.time, 
+    Key? key,
+    this.message,
+    this.time,
     this.attachmentType,
     this.attachmentPath,
     this.attachmentName,
   }) : super(key: key);
-  
+
   final String? message;
   final String? time;
   final String? attachmentType;
   final String? attachmentPath;
   final String? attachmentName;
-  
+
   void _showFullScreenImage(BuildContext context, String imagePath) {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -39,7 +39,7 @@ class OwnMessageCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.image, size: 100, color: Colors.grey[600]),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
                           Text(
                             'Image not found',
                             style: TextStyle(color: Colors.grey[400]),
@@ -59,7 +59,7 @@ class OwnMessageCard extends StatelessWidget {
 
   Widget _buildAttachment(BuildContext context) {
     if (attachmentType == null || attachmentPath == null) {
-  return const SizedBox.shrink();
+      return const SizedBox.shrink();
     }
 
     switch (attachmentType) {
@@ -85,14 +85,14 @@ class OwnMessageCard extends StatelessWidget {
                       color: Colors.grey[300],
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Icon(Icons.image, size: 50, color: Colors.grey),
+                    child: const Icon(Icons.image, size: 50, color: Colors.grey),
                   );
                 },
               ),
             ),
           ),
         );
-      
+
       case 'document':
         return Container(
           margin: const EdgeInsets.only(bottom: 8),
@@ -100,11 +100,11 @@ class OwnMessageCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.grey),
+            border: Border.all(color: Colors.grey[300]!),
           ),
           child: Row(
             children: [
-              Icon(Icons.insert_drive_file, color: Colors.blue, size: 24),
+              const Icon(Icons.insert_drive_file, color: Colors.blue, size: 24),
               const SizedBox(width: 8),
               Expanded(
                 child: Column(
@@ -112,11 +112,11 @@ class OwnMessageCard extends StatelessWidget {
                   children: [
                     Text(
                       attachmentName ?? 'Document',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                     ),
                     Text(
                       'PDF Document',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                     ),
                   ],
                 ),
@@ -124,7 +124,7 @@ class OwnMessageCard extends StatelessWidget {
             ],
           ),
         );
-      
+
       case 'audio':
         return Container(
           margin: const EdgeInsets.only(bottom: 8),
@@ -132,11 +132,11 @@ class OwnMessageCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.grey),
+            border: Border.all(color: Colors.grey[300]!),
           ),
           child: Row(
             children: [
-              Icon(Icons.play_circle_filled, color: Colors.green, size: 24),
+              const Icon(Icons.play_circle_filled, color: Colors.green, size: 24),
               const SizedBox(width: 8),
               Expanded(
                 child: Column(
@@ -144,11 +144,11 @@ class OwnMessageCard extends StatelessWidget {
                   children: [
                     Text(
                       attachmentName ?? 'Audio Message',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                     ),
                     Text(
                       '0:30',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                     ),
                   ],
                 ),
@@ -156,84 +156,67 @@ class OwnMessageCard extends StatelessWidget {
             ],
           ),
         );
-      
+
       default:
-  return const SizedBox.shrink();
+        return const SizedBox.shrink();
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.end, // Aligns "own" messages to the right
       children: [
         Container(
-          margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 8),
-          padding: const EdgeInsets.all(6),
-          constraints: const BoxConstraints(maxWidth: 250),
+          margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8), // More vertical spacing for chat bubbles
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), // Generous padding inside the bubble
+          constraints: const BoxConstraints(maxWidth: 250), // Prevents overly wide bubbles
           decoration: BoxDecoration(
-            color: const Color(0xffe1ffc7),
+            color: const Color(0xffe1ffc7), // Original "own message" background
             borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(5),
-              topRight: Radius.circular(5),
-              bottomLeft: Radius.circular(5),
-              bottomRight: Radius.circular(5),
+              // Typical chat bubble shape for "sent" messages (right-aligned)
+              topLeft: Radius.circular(12),
+              topRight: Radius.circular(12),
+              bottomLeft: Radius.circular(12),
+              bottomRight: Radius.circular(0),
             ),
             boxShadow: const [
               BoxShadow(
                 color: Colors.black12,
-                blurRadius: 3,
+                blurRadius: 2,
                 offset: Offset(0, 1),
               ),
             ],
           ),
-          child: Stack(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(2.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                                         _buildAttachment(context),
-                    if (message != null && message!.isNotEmpty)
-                      RichText(
-                        text: TextSpan(
-                          children: <TextSpan>[
-                            // Real message
-                            TextSpan(
-                              text: "${message ?? ''}    ",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black87,
-                              ),
-                            ),
-                                // No timestamp
-                          ],
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-                  // Real timestamp positioned at bottom right
-                  Positioned(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: Colors.yellow,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        time ?? 'NO TIME',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    right: -2.0,
-                    bottom: -0.0,
+          // Replace Stack with Column for simpler, reliable layout
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end, // Aligns content (text/attachments) to the right
+            children: [
+              _buildAttachment(context), // Show attachment first (if any)
+              
+              // Show message text (if not empty)
+              if (message != null && message!.isNotEmpty)
+                Text(
+                  message!,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black87,
                   ),
+                ),
+              
+              // Show timestamp (only if time is provided)
+              if (time != null && time!.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4), // Space between message and timestamp
+                  child: Text(
+                    time!,
+                    style: TextStyle(
+                      fontSize: 11, // Small, unobtrusive size
+                      color: Colors.grey[700], // Subtle color (doesn't clash)
+                      fontWeight: FontWeight.normal, // Remove bold for natural look
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
@@ -241,4 +224,3 @@ class OwnMessageCard extends StatelessWidget {
     );
   }
 }
-
