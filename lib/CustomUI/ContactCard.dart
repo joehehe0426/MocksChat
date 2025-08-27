@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class ContactCard extends StatelessWidget {
-  const ContactCard({Key? key, this.contact}) : super(key: key);
+  const ContactCard({Key? key, this.contact, this.onTap}) : super(key: key);
   final ChatModel? contact;
+  final VoidCallback? onTap;
   @override
   Widget build(BuildContext context) {
-    return ListTile(
+  return ListTile(
       leading: Container(
         width: 50,
         height: 55,
@@ -54,6 +55,7 @@ class ContactCard extends StatelessWidget {
            fontSize: 13,
          ),
        ),
+      onTap: onTap,
     );
   }
 }

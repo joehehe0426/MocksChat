@@ -1,4 +1,5 @@
 import 'package:chatapp/CustomUI/CustomCard.dart';
+import 'package:chatapp/Screens/IndividualPage.dart';
 import 'package:chatapp/Model/ChatModel.dart';
 import 'package:chatapp/Model/MessageModel.dart';
 import 'package:chatapp/database/DatabaseHelper.dart';
@@ -187,10 +188,26 @@ class _ChatPageState extends State<ChatPage> {
                     child: ListView.builder(
                       padding: EdgeInsets.zero,
                       itemCount: updatedChatModels.isNotEmpty ? updatedChatModels.length : (widget.chatmodels?.length ?? 0),
-                      itemBuilder: (contex, index) => CustomCard(
-                        chatModel: updatedChatModels.isNotEmpty ? updatedChatModels[index] : widget.chatmodels?[index] ?? ChatModel(name: "Unknown", id: 0),
-                        sourchat: widget.sourchat,
-                      ),
+                      itemBuilder: (context, index) {
+                        final chatModel = updatedChatModels.isNotEmpty
+                            ? updatedChatModels[index]
+                            : widget.chatmodels?[index] ?? ChatModel(name: "Unknown", id: 0);
+                        return CustomCard(
+                          chatModel: chatModel,
+                          sourchat: widget.sourchat,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => IndividualPage(
+                                  chatModel: chatModel,
+                                  sourchat: widget.sourchat,
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
                     ),
                   ),
           ),

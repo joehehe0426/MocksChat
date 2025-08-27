@@ -62,6 +62,10 @@ class _HomescreenState extends State<Homescreen> {
 
   Future<void> _loadChatModelsFromMockData() async {
     List<ChatModel> models = await MockDataLoader.getMockChats();
+    print('DEBUG: Loaded chat models count: \'${models.length}\'');
+    for (var chat in models) {
+      print('DEBUG: ChatModel: id=\'${chat.id}\', name=\'${chat.name}\', currentMessage=\'${chat.currentMessage}\'');
+    }
     ChatModel sourceChat = ChatModel(
       name: "Me",
       isGroup: false,

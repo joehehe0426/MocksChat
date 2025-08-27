@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
 class ButtonCard extends StatelessWidget {
-  const ButtonCard({Key? key, this.name, this.icon}) : super(key: key);
+  const ButtonCard({Key? key, this.name, this.icon, this.onTap}) : super(key: key);
   final String? name;
   final IconData? icon;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +25,7 @@ class ButtonCard extends StatelessWidget {
           fontWeight: FontWeight.bold,
         ),
       ),
+      onTap: onTap,
     );
   }
 }

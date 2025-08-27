@@ -207,43 +207,33 @@ class OwnMessageCard extends StatelessWidget {
                                 color: Colors.black87,
                               ),
                             ),
-                            // Fake timestamp as placeholder (invisible)
-                            TextSpan(
-                              text: time ?? '',
-                              style: TextStyle(
-                                color: Colors.transparent,
-                                fontSize: 11,
-                              ),
-                            ),
+                                // No timestamp
                           ],
                         ),
                       ),
                   ],
                 ),
               ),
-              // Real timestamp positioned at bottom right
-              Positioned(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      time ?? '',
-                      style: TextStyle(
-                        fontSize: 9,
-                        color: Colors.grey,
+                  // Real timestamp positioned at bottom right
+                  Positioned(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.yellow,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        time ?? 'NO TIME',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                    SizedBox(width: 4),
-                    Icon(
-                      Icons.done_all,
-                      size: 14,
-                      color: Colors.blue,
-                    ),
-                  ],
-                ),
-                right: -2.0,
-                bottom: -0.0,
-              ),
+                    right: -2.0,
+                    bottom: -0.0,
+                  ),
             ],
           ),
         ),

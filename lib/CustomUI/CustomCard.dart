@@ -3,9 +3,10 @@ import 'package:chatapp/CustomUI/CachedAvatar.dart';
 import 'package:flutter/material.dart';
 
 class CustomCard extends StatelessWidget {
-  const CustomCard({Key? key, this.chatModel, this.sourchat}) : super(key: key);
+  const CustomCard({Key? key, this.chatModel, this.sourchat, this.onTap}) : super(key: key);
   final ChatModel? chatModel;
   final ChatModel? sourchat;
+  final VoidCallback? onTap;
   
   @override
   Widget build(BuildContext context) {
@@ -18,6 +19,7 @@ class CustomCard extends StatelessWidget {
         child: _buildTrailing(),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      onTap: onTap,
     );
   }
 
