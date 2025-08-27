@@ -41,19 +41,19 @@ class ContactCard extends StatelessWidget {
           ],
         ),
       ),
-      title: Text(
-        contact?.name ?? '',
-        style: TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      subtitle: Text(
-        contact?.status ?? '',
-        style: TextStyle(
-          fontSize: 13,
-        ),
-      ),
+       title: Text(
+         contact?.name ?? '',
+         style: const TextStyle(
+           fontSize: 15,
+           fontWeight: FontWeight.bold,
+         ),
+       ),
+       subtitle: Text(
+         contact?.status ?? '',
+         style: const TextStyle(
+           fontSize: 13,
+         ),
+       ),
     );
   }
 }

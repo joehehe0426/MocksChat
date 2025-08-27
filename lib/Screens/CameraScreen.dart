@@ -108,21 +108,25 @@ class _CameraScreenState extends State<CameraScreen> {
                           setState(() {
                             isRecoring = false;
                           });
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (builder) => VideoView(
-                                        path: videopath.path,
-                                      )));
+                          if (mounted) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (builder) => VideoView(
+                                          path: videopath.path,
+                                        )));
+                          }
                         },
                         onTap: () async {
                           XFile image = await _cameraController.takePicture();
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (builder) => CameraView(
-                                        path: image.path,
-                                      )));
+                          if (mounted) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (builder) => CameraView(
+                                          path: image.path,
+                                        )));
+                          }
                         },
                         child: isRecoring
                             ? Icon(

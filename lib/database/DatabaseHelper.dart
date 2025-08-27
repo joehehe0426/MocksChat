@@ -20,8 +20,9 @@ class DatabaseHelper {
     String path = join(await getDatabasesPath(), 'whatsapp_clone.db');
     return await openDatabase(
       path,
-      version: 1,
+      version: 3,
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
       singleInstance: true,
     );
   }
@@ -62,7 +63,7 @@ class DatabaseHelper {
     // Create contacts table
     await db.execute('''
       CREATE TABLE contacts(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER PRIMARY KEY,
         name TEXT NOT NULL,
         phoneNumber TEXT NOT NULL,
         avatar TEXT,
@@ -70,6 +71,36 @@ class DatabaseHelper {
         timestamp INTEGER NOT NULL
       )
     ''');
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    // For this migration, we want to remove AUTOINCREMENT from contacts.id.
+    // SQLite doesn't support altering primary key directly; we'll recreate the table.
+    if (oldVersion < 2) {
+      await db.transaction((txn) async {
+        // Create new table without AUTOINCREMENT
+        await txn.execute('''
+          CREATE TABLE IF NOT EXISTS contacts_new(
+            id INTEGER PRIMARY KEY,
+            name TEXT NOT NULL,
+            phoneNumber TEXT NOT NULL,
+            avatar TEXT,
+            isFavorite INTEGER DEFAULT 0,
+            timestamp INTEGER NOT NULL
+          )
+        ''');
+
+        // Copy data over if any exists
+        await txn.execute('''
+          INSERT INTO contacts_new(id, name, phoneNumber, avatar, isFavorite, timestamp)
+          SELECT id, name, phoneNumber, avatar, isFavorite, timestamp FROM contacts
+        ''');
+
+        // Replace old table
+        await txn.execute('DROP TABLE IF EXISTS contacts');
+        await txn.execute('ALTER TABLE contacts_new RENAME TO contacts');
+      });
+    }
   }
 
   // Insert a new message with error handling
@@ -290,23 +321,27 @@ class DatabaseHelper {
         await txn.delete('chat_sessions');
         await txn.delete('contacts');
       });
-      print('Database cleared successfully');
+      print('🗑️ Database cleared successfully');
     } catch (e) {
       print('Error clearing database: $e');
     }
   }
 
   // Contact Management Methods
-  Future<int> insertContact(String name, String phoneNumber, {String? avatar, bool isFavorite = false}) async {
+  Future<int> insertContact(String name, String phoneNumber, {int? id, String? avatar, bool isFavorite = false}) async {
     try {
       final db = await database;
-      return await db.insert('contacts', {
+      final data = {
         'name': name,
         'phoneNumber': phoneNumber,
         'avatar': avatar,
         'isFavorite': isFavorite ? 1 : 0,
         'timestamp': DateTime.now().millisecondsSinceEpoch,
-      });
+      };
+      if (id != null) {
+        data['id'] = id;
+      }
+      return await db.insert('contacts', data);
     } catch (e) {
       print('Error inserting contact: $e');
       rethrow;
@@ -402,6 +437,54 @@ class DatabaseHelper {
       );
     } catch (e) {
       print('Error toggling favorite: $e');
+    }
+  }
+
+  // Get contacts by phone number
+  Future<List<Map<String, dynamic>>> getContactsByPhone(String phone) async {
+    try {
+      final db = await database;
+      final List<Map<String, dynamic>> maps = await db.query(
+        'contacts',
+        where: 'phoneNumber LIKE ?',
+        whereArgs: ['%$phone%'],
+        orderBy: 'name ASC',
+      );
+
+      return maps;
+    } catch (e) {
+      print('Error getting contacts by phone: $e');
+      return [];
+    }
+  }
+
+  // Update contact avatar
+  Future<void> updateContactAvatar(int id, String? path) async {
+    try {
+      final db = await database;
+      await db.update(
+        'contacts',
+        {'avatar': path},
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+    } catch (e) {
+      print('Error updating contact avatar: $e');
+    }
+  }
+
+  // Update last contacted timestamp
+  Future<void> updateLastContacted(int id, int timestamp) async {
+    try {
+      final db = await database;
+      await db.update(
+        'contacts',
+        {'timestamp': timestamp},
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+    } catch (e) {
+      print('Error updating last contacted: $e');
     }
   }
 

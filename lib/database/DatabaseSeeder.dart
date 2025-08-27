@@ -1,5 +1,8 @@
 import 'package:chatapp/Model/MessageModel.dart';
 import 'package:chatapp/database/DatabaseHelper.dart';
+// Ensure the import path is correct based on your project structure.
+// If 'MockDataConfig.dart' is actually located at 'lib/config/MockDataConfig.dart', the import below is correct.
+// If not, update the path accordingly.
 import 'package:chatapp/config/MockDataConfig.dart';
 
 class DatabaseSeeder {
@@ -8,8 +11,8 @@ class DatabaseSeeder {
   // Seed the database with initial data
   static Future<void> seedDatabase() async {
     try {
-      if (!MockDataConfig.enableMockData) {
-        if (MockDataConfig.showDebugLogs) {
+  if (!MockDataConfig.enableMockData) {
+  if (MockDataConfig.showDebugLogs) {
           print('🚫 Mock data is disabled in MockDataConfig');
         }
         return;
@@ -17,21 +20,21 @@ class DatabaseSeeder {
 
       // Check if database already has data
       List<Map<String, dynamic>> existingContacts = await _databaseHelper.getAllContacts();
-      if (existingContacts.isNotEmpty && !MockDataConfig.clearExistingData) {
-        if (MockDataConfig.showDebugLogs) {
+  if (existingContacts.isNotEmpty && !MockDataConfig.clearExistingData) {
+  if (MockDataConfig.showDebugLogs) {
           print('📊 Database already has data, skipping seeding');
         }
         return;
       }
 
-      if (MockDataConfig.showDebugLogs) {
+  if (MockDataConfig.showDebugLogs) {
         print('🌱 Seeding database with mock data from MockDataConfig...');
       }
       
       // Clear existing data if configured
-      if (MockDataConfig.clearExistingData) {
+  if (MockDataConfig.clearExistingData) {
         await _databaseHelper.clearAllData();
-        if (MockDataConfig.showDebugLogs) {
+  if (MockDataConfig.showDebugLogs) {
           print('🗑️ Cleared existing data');
         }
       }
@@ -45,7 +48,7 @@ class DatabaseSeeder {
       // Add chat sessions from config
       await _addChatSessionsFromConfig();
       
-      if (MockDataConfig.showDebugLogs) {
+  if (MockDataConfig.showDebugLogs) {
         print('✅ Database seeded successfully!');
       }
     } catch (e) {
@@ -56,17 +59,21 @@ class DatabaseSeeder {
   static Future<void> _addContactsFromConfig() async {
     try {
       print('🌱 Starting to add contacts from config...');
-      for (var contact in MockDataConfig.contacts) {
+      // Insert exactly 15 contacts with IDs 1..15
+  for (int i = 0; i < 15 && i < MockDataConfig.contacts.length; i++) {
+  final contact = MockDataConfig.contacts[i];
+        final explicitId = i + 1; // 1..15
         int contactId = await _databaseHelper.insertContact(
           contact['name'],
           contact['phoneNumber'],
+          id: explicitId,
           avatar: contact['avatar'],
         );
-        print('📞 Added contact: ${contact['name']} with ID: $contactId');
+        print('📞 Added contact: ${contact['name']} with explicit ID: $contactId');
       }
       
-      if (MockDataConfig.showDebugLogs) {
-        print('📞 Added ${MockDataConfig.contacts.length} contacts from config');
+  if (MockDataConfig.showDebugLogs) {
+  print('📞 Added ${MockDataConfig.contacts.length} contacts from config');
       }
     } catch (e) {
       print('Error adding contacts from config: $e');
@@ -79,9 +86,9 @@ class DatabaseSeeder {
       await _generateExtendedChatHistory();
       
       // Also add the original messages from config (mapped to correct contact IDs)
-      for (var msg in MockDataConfig.messages) {
+  for (var msg in MockDataConfig.messages) {
         int originalChatId = msg['chatId'];
-        int actualChatId = originalChatId + 15; // Map 1-8 to 16-23
+        int actualChatId = originalChatId; // IDs are now 1..15 directly
         
         await _databaseHelper.insertMessage(
           MessageModel(
@@ -96,8 +103,8 @@ class DatabaseSeeder {
         );
       }
       
-      if (MockDataConfig.showDebugLogs) {
-        print('💬 Added extended chat history + ${MockDataConfig.messages.length} messages from config');
+  if (MockDataConfig.showDebugLogs) {
+  print('💬 Added extended chat history + ${MockDataConfig.messages.length} messages from config');
       }
     } catch (e) {
       print('Error adding messages from config: $e');
@@ -131,32 +138,32 @@ class DatabaseSeeder {
     ];
 
     // Generate messages for each contact over the past 40 days
-    for (int contactId = 16; contactId <= 30; contactId++) {
+    for (int contactId = 1; contactId <= 15; contactId++) {
       // Create contact-specific message pool for more variety
       List<String> messages;
-      if (contactId <= 23) {
+      if (contactId <= 8) {
         // Family members get family messages with some variation
         messages = List.from(familyMessages);
         // Add some contact-specific messages
-        if (contactId == 16) messages.addAll(['老豆，記得買菜', '好的，買什麼？', '青菜和肉', '知道了']);
-        if (contactId == 17) messages.addAll(['媽，今天煮什麼？', '紅燒肉', '太好了', '記得回來吃飯']);
-        if (contactId == 18) messages.addAll(['哥，一起打球嗎？', '好啊，什麼時候？', '下午三點', 'OK']);
-        if (contactId == 19) messages.addAll(['爺爺，身體還好嗎？', '還好，你呢？', '我也還好', '多保重']);
-        if (contactId == 20) messages.addAll(['呀婆，今天去哪裡？', '去公園散步', '小心點', '知道']);
-        if (contactId == 21) messages.addAll(['呀嫲，吃飯了嗎？', '剛吃完', '好吃嗎？', '還不錯']);
-        if (contactId == 22) messages.addAll(['梅姨，最近忙嗎？', '還好，你呢？', '我也還好', '注意休息']);
-        if (contactId == 23) messages.addAll(['舅父，工作怎麼樣？', '還行', '辛苦了', '謝謝']);
+        if (contactId == 1) messages.addAll(['老豆，記得買菜', '好的，買什麼？', '青菜和肉', '知道了']);
+        if (contactId == 2) messages.addAll(['媽，今天煮什麼？', '紅燒肉', '太好了', '記得回來吃飯']);
+        if (contactId == 3) messages.addAll(['哥，一起打球嗎？', '好啊，什麼時候？', '下午三點', 'OK']);
+        if (contactId == 4) messages.addAll(['爺爺，身體還好嗎？', '還好，你呢？', '我也還好', '多保重']);
+        if (contactId == 5) messages.addAll(['呀婆，今天去哪裡？', '去公園散步', '小心點', '知道']);
+        if (contactId == 6) messages.addAll(['呀嫲，吃飯了嗎？', '剛吃完', '好吃嗎？', '還不錯']);
+        if (contactId == 7) messages.addAll(['梅姨，最近忙嗎？', '還好，你呢？', '我也還好', '注意休息']);
+        if (contactId == 8) messages.addAll(['舅父，工作怎麼樣？', '還行', '辛苦了', '謝謝']);
       } else {
         // Friends get friend messages with some variation
         messages = List.from(friendMessages);
         // Add some contact-specific messages
-        if (contactId == 24) messages.addAll(['小明，最近學習怎麼樣？', '還好', '加油', '謝謝']);
-        if (contactId == 25) messages.addAll(['小華，週末有空嗎？', '有啊', '一起看電影？', '好啊']);
-        if (contactId == 26) messages.addAll(['阿強，今天心情怎麼樣？', '不錯', '那就好', '謝謝關心']);
-        if (contactId == 27) messages.addAll(['小美，吃飯了嗎？', '還沒', '一起吃飯？', '好啊']);
-        if (contactId == 28) messages.addAll(['阿傑，最近在忙什麼？', '工作', '辛苦了', '謝謝']);
-        if (contactId == 29) messages.addAll(['小麗，今天天氣真好', '是啊', '要不要出門？', '好啊']);
-        if (contactId == 30) messages.addAll(['阿偉，最近怎麼樣？', '還好', '那就好', '保重']);
+        if (contactId == 9) messages.addAll(['小明，最近學習怎麼樣？', '還好', '加油', '謝謝']);
+        if (contactId == 10) messages.addAll(['小華，週末有空嗎？', '有啊', '一起看電影？', '好啊']);
+        if (contactId == 11) messages.addAll(['阿強，今天心情怎麼樣？', '不錯', '那就好', '謝謝關心']);
+        if (contactId == 12) messages.addAll(['小美，吃飯了嗎？', '還沒', '一起吃飯？', '好啊']);
+        if (contactId == 13) messages.addAll(['阿傑，最近在忙什麼？', '工作', '辛苦了', '謝謝']);
+        if (contactId == 14) messages.addAll(['小麗，今天天氣真好', '是啊', '要不要出門？', '好啊']);
+        if (contactId == 15) messages.addAll(['阿偉，最近怎麼樣？', '還好', '那就好', '保重']);
       }
       
       // Generate 2-5 messages per day for the past 40 days
@@ -219,8 +226,10 @@ class DatabaseSeeder {
   static Future<void> _addChatSessionsFromConfig() async {
     try {
       print('💬 Starting to add chat sessions from config...');
-      for (var contact in MockDataConfig.contacts) {
-        int chatId = MockDataConfig.contacts.indexOf(contact) + 16; // Start from 16 to match contact IDs
+  for (var contact in MockDataConfig.contacts) {
+  int index = MockDataConfig.contacts.indexOf(contact);
+        if (index >= 15) break; // Only for first 15 contacts
+        int chatId = index + 1; // 1..15
         String profileImage = contact['profileImage'] ?? '';
         
         print('💬 Processing contact: ${contact['name']} with chatId: $chatId, profileImage: $profileImage');
@@ -246,7 +255,7 @@ class DatabaseSeeder {
         }
       }
       
-      if (MockDataConfig.showDebugLogs) {
+  if (MockDataConfig.showDebugLogs) {
         print('💬 Added chat sessions from config with last messages');
       }
     } catch (e) {

@@ -369,6 +369,6 @@ class MockDataConfig {
   // ========================================
   // Set to true to clear existing data and re-seed with new mock data
   // Set to false to keep existing data
-  static const bool clearExistingData = true; // Force clear to fix chat history
+  static const bool clearExistingData = true; // Clear and reseed to fix chat history mapping
   static const bool showDebugLogs = true;
 }

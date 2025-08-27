@@ -97,12 +97,12 @@ class _MessageEditorScreenState extends State<MessageEditorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      onPopInvoked: (didPop) async {
-        if (didPop) {
-          Navigator.of(context).pop(_messagesEdited);
-        }
-      },
+         return PopScope(
+       onPopInvokedWithResult: (didPop, result) async {
+         if (didPop) {
+           Navigator.of(context).pop(_messagesEdited);
+         }
+       },
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -255,9 +255,11 @@ class _MessageEditorScreenState extends State<MessageEditorScreen> {
           await _databaseHelper.insertMessage(newMessage, chatId);
           await _databaseHelper.updateChatSession(chatId, newMessage.message ?? '', newMessage.time ?? '');
           
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Message added and saved')),
-          );
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Message added and saved')),
+            );
+          }
         },
       ),
     );
@@ -292,9 +294,11 @@ class _MessageEditorScreenState extends State<MessageEditorScreen> {
             await _databaseHelper.updateChatSession(chatId, lastMessage.message ?? '', lastMessage.time ?? '');
           }
           
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Message updated and saved')),
-          );
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Message updated and saved')),
+            );
+          }
         },
       ),
     );
@@ -334,9 +338,11 @@ class _MessageEditorScreenState extends State<MessageEditorScreen> {
               }
               
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Message deleted and saved')),
-              );
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Message deleted and saved')),
+                );
+              }
             },
             child: Text('Delete', style: TextStyle(color: Colors.red)),
           ),
@@ -365,10 +371,12 @@ class _MessageEditorScreenState extends State<MessageEditorScreen> {
                 _messages.clear();
                 _messagesEdited = true;
               });
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('All messages cleared and saved')),
-              );
+                             Navigator.pop(context);
+               if (mounted) {
+                 ScaffoldMessenger.of(context).showSnackBar(
+                   const SnackBar(content: Text('All messages cleared and saved')),
+                 );
+               }
             },
             child: Text('Clear', style: TextStyle(color: Colors.red)),
           ),
@@ -453,10 +461,12 @@ class _MessageEditorScreenState extends State<MessageEditorScreen> {
       _messagesEdited = true;
     });
     
-    Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('$templateType template loaded and saved')),
-    );
+         Navigator.pop(context);
+     if (mounted) {
+       ScaffoldMessenger.of(context).showSnackBar(
+         SnackBar(content: Text('$templateType template loaded and saved')),
+       );
+     }
   }
 }
 

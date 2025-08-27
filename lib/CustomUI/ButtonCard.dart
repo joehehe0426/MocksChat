@@ -15,11 +15,11 @@ class ButtonCard extends StatelessWidget {
           size: 26,
           color: Colors.white,
         ),
-        backgroundColor: Color(0xFF25D366),
+        backgroundColor: const Color(0xFF25D366),
       ),
       title: Text(
         name ?? '',
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.bold,
         ),

@@ -21,12 +21,12 @@ class AvtarCard extends StatelessWidget {
                   chatModel?.isGroup == true
                       ? "assets/groups.svg"
                       : "assets/person.svg",
-                  colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                  colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
                   height: 30,
                   width: 30,
                 ),
               ),
-              Positioned(
+              const Positioned(
                 bottom: 0,
                 right: 0,
                 child: CircleAvatar(
@@ -43,8 +43,9 @@ class AvtarCard extends StatelessWidget {
           ),
           Text(
             chatModel?.name ?? '',
-            style: TextStyle(
-              fontSize: 12,
+            style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.normal,
             ),
           )
         ],

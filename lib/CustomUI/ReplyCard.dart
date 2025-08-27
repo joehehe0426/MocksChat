@@ -23,8 +23,8 @@ class ReplyCard extends StatelessWidget {
           backgroundColor: Colors.black,
           appBar: AppBar(
             backgroundColor: Colors.black,
-            iconTheme: IconThemeData(color: Colors.white),
-            title: Text('Image', style: TextStyle(color: Colors.white)),
+            iconTheme: const IconThemeData(color: Colors.white),
+            title: const Text('Image', style: TextStyle(color: Colors.white)),
           ),
           body: Center(
             child: InteractiveViewer(
@@ -38,11 +38,11 @@ class ReplyCard extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.image, size: 100, color: Colors.grey[600]),
-                          SizedBox(height: 16),
-                          Text(
+                          const Icon(Icons.image, size: 100, color: Colors.grey),
+                          const SizedBox(height: 16),
+                          const Text(
                             'Image not found',
-                            style: TextStyle(color: Colors.grey[400]),
+                            style: TextStyle(color: Colors.grey),
                           ),
                         ],
                       ),
@@ -56,16 +56,14 @@ class ReplyCard extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildAttachment(BuildContext context) {
     if (attachmentType == null || attachmentPath == null) {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
-
     switch (attachmentType) {
       case 'image':
         return Container(
-          margin: EdgeInsets.only(bottom: 8),
+          margin: const EdgeInsets.only(bottom: 8),
           child: GestureDetector(
             onTap: () {
               _showFullScreenImage(context, attachmentPath!);
@@ -85,38 +83,37 @@ class ReplyCard extends StatelessWidget {
                       color: Colors.grey[300],
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Icon(Icons.image, size: 50, color: Colors.grey[600]),
+                    child: const Icon(Icons.image, size: 50, color: Colors.grey),
                   );
                 },
               ),
             ),
           ),
         );
-      
       case 'document':
         return Container(
-          margin: EdgeInsets.only(bottom: 8),
-          padding: EdgeInsets.all(12),
+          margin: const EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Colors.grey[50],
+            color: Colors.white,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.grey[300]!),
+            border: Border.all(color: Colors.grey),
           ),
           child: Row(
             children: [
-              Icon(Icons.insert_drive_file, color: Colors.blue, size: 24),
-              SizedBox(width: 8),
+              const Icon(Icons.insert_drive_file, color: Colors.blue, size: 24),
+              const SizedBox(width: 8),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       attachmentName ?? 'Document',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    Text(
+                    const Text(
                       'PDF Document',
-                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
                     ),
                   ],
                 ),
@@ -124,31 +121,30 @@ class ReplyCard extends StatelessWidget {
             ],
           ),
         );
-      
       case 'audio':
         return Container(
-          margin: EdgeInsets.only(bottom: 8),
-          padding: EdgeInsets.all(12),
+          margin: const EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Colors.grey[50],
+            color: Colors.white,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.grey[300]!),
+            border: Border.all(color: Colors.grey),
           ),
           child: Row(
             children: [
-              Icon(Icons.play_circle_filled, color: Colors.green, size: 24),
-              SizedBox(width: 8),
+              const Icon(Icons.play_circle_filled, color: Colors.green, size: 24),
+              const SizedBox(width: 8),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       attachmentName ?? 'Audio Message',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    Text(
+                    const Text(
                       '0:30',
-                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
                     ),
                   ],
                 ),
@@ -156,9 +152,8 @@ class ReplyCard extends StatelessWidget {
             ],
           ),
         );
-      
       default:
-        return SizedBox.shrink();
+        return const SizedBox.shrink();
     }
   }
   
@@ -168,18 +163,18 @@ class ReplyCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Container(
-          margin: EdgeInsets.symmetric(vertical: 1, horizontal: 8),
-          padding: EdgeInsets.all(6),
-          constraints: BoxConstraints(maxWidth: 250),
+          margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 8),
+          padding: const EdgeInsets.all(6),
+          constraints: const BoxConstraints(maxWidth: 250),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.only(
+            borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(5),
               topRight: Radius.circular(5),
               bottomLeft: Radius.circular(5),
               bottomRight: Radius.circular(5),
             ),
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
                 color: Colors.black12,
                 blurRadius: 3,
@@ -201,7 +196,7 @@ class ReplyCard extends StatelessWidget {
                           children: <TextSpan>[
                             // Real message
                             TextSpan(
-                              text: (message ?? '') + "    ",
+                              text: "${message ?? ''}    ",
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.black87,
@@ -225,9 +220,9 @@ class ReplyCard extends StatelessWidget {
               Positioned(
                 child: Text(
                   time ?? '',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 9,
-                    color: Colors.grey[600],
+                    color: Colors.grey,
                   ),
                 ),
                 right: -0.0,

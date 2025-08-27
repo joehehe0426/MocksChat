@@ -128,7 +128,7 @@ class CachedAvatar extends StatelessWidget {
     if (fallbackIcon != null && fallbackIcon!.isNotEmpty) {
       return SvgPicture.asset(
         "assets/$fallbackIcon",
-        color: Colors.grey[600],
+        colorFilter: ColorFilter.mode(Colors.grey[600]!, BlendMode.srcIn),
         width: radius,
         height: radius,
       );
@@ -160,15 +160,14 @@ class CachedAvatar extends StatelessWidget {
   }
 
   String _getFallbackProfileImage(int contactId) {
-    // Map contact IDs to profile pictures (16-30, since your contacts have IDs 16-30)
-    if (contactId >= 16 && contactId <= 30) {
-      // Map contact ID 16-30 to photo 1-6 (cycling through your 6 photos)
-      int photoNumber = ((contactId - 16) % 6) + 1;
+    // Map contact IDs 1-15 to profile pictures 1-15
+    if (contactId >= 1 && contactId <= 15) {
+      int photoNumber = ((contactId - 1) % 15) + 1;
       String imagePath = 'assets/profile_pictures/$photoNumber.jpg';
       print('🖼️ Fallback image for contact $contactId: $imagePath (mapped from photo $photoNumber)');
       return imagePath;
     }
-    print('❌ No fallback image for contact $contactId (ID not in range 16-30)');
+    print('❌ No fallback image for contact $contactId (ID not in range 1-15)');
     return '';
   }
 
@@ -185,10 +184,13 @@ class CachedAvatar extends StatelessWidget {
   Color _getAvatarColor(String name) {
     // Generate consistent color based on name
     int hash = name.hashCode;
-    return Color.fromARGB(255, 
-      (hash & 0xFF0000) >> 16, 
-      (hash & 0x00FF00) >> 8, 
-      hash & 0x0000FF
-    ).withOpacity(0.8);
+    final color = Color.fromARGB(
+      255,
+      (hash & 0xFF0000) >> 16,
+      (hash & 0x00FF00) >> 8,
+      hash & 0x0000FF,
+    );
+    // 0.8 opacity ≈ 204 alpha
+    return color.withAlpha(204);
   }
 }

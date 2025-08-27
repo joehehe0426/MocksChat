@@ -125,7 +125,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      onPopInvoked: (didPop) async {
+      onPopInvokedWithResult: (didPop, result) async {
         if (didPop) {
           // Refresh messages when returning to this screen
           await _loadLatestMessages();
