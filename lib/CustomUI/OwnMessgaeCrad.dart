@@ -16,6 +16,7 @@ class OwnMessageCard extends StatelessWidget {
   final String? attachmentPath;
   final String? attachmentName;
 
+  // ... (keep _showFullScreenImage and _buildAttachment unchanged)
   void _showFullScreenImage(BuildContext context, String imagePath) {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -67,9 +68,7 @@ class OwnMessageCard extends StatelessWidget {
         return Container(
           margin: const EdgeInsets.only(bottom: 8),
           child: GestureDetector(
-            onTap: () {
-              _showFullScreenImage(context, attachmentPath!);
-            },
+            onTap: () => _showFullScreenImage(context, attachmentPath!),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image.asset(
@@ -164,59 +163,58 @@ class OwnMessageCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Critical debug: Verify if the widget is receiving the time value
+    debugPrint('=== OwnMessageCard Debug ===');
+    debugPrint('Time value passed: $time');
+    debugPrint('Message present: ${message != null && message!.isNotEmpty}');
+    debugPrint('Attachment type: $attachmentType');
+
     return Row(
-      mainAxisAlignment: MainAxisAlignment.end, // Aligns "own" messages to the right
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
+        // Add a border to the main container to check clipping
         Container(
-          margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8), // More vertical spacing for chat bubbles
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), // Generous padding inside the bubble
-          constraints: const BoxConstraints(maxWidth: 250), // Prevents overly wide bubbles
+          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+          padding: const EdgeInsets.all(16), // Extra padding to prevent clipping
+          constraints: const BoxConstraints(maxWidth: 250),
           decoration: BoxDecoration(
-            color: const Color(0xffe1ffc7), // Original "own message" background
+            color: const Color(0xffe1ffc7),
+            border: Border.all(color: Colors.red, width: 1), // Debug border
             borderRadius: const BorderRadius.only(
-              // Typical chat bubble shape for "sent" messages (right-aligned)
               topLeft: Radius.circular(12),
               topRight: Radius.circular(12),
               bottomLeft: Radius.circular(12),
               bottomRight: Radius.circular(0),
             ),
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 2,
-                offset: Offset(0, 1),
-              ),
-            ],
           ),
-          // Replace Stack with Column for simpler, reliable layout
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end, // Aligns content (text/attachments) to the right
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              _buildAttachment(context), // Show attachment first (if any)
+              _buildAttachment(context),
               
-              // Show message text (if not empty)
+              if (message != null && message!.isNotEmpty)
+                const SizedBox(height: 8),
+              
               if (message != null && message!.isNotEmpty)
                 Text(
                   message!,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.black87,
-                  ),
+                  style: const TextStyle(fontSize: 16, color: Colors.black87),
                 ),
               
-              // Show timestamp (only if time is provided)
-              if (time != null && time!.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(top: 4), // Space between message and timestamp
-                  child: Text(
-                    time!,
-                    style: TextStyle(
-                      fontSize: 11, // Small, unobtrusive size
-                      color: Colors.grey[700], // Subtle color (doesn't clash)
-                      fontWeight: FontWeight.normal, // Remove bold for natural look
-                    ),
+              // Simple timestamp at bottom right
+              Container(
+                color: Colors.red, // Debug color to make it visible
+                padding: const EdgeInsets.only(top: 4, right: 4),
+                child: Text(
+                  'TIME: ${time ?? 'NULL'}', // Debug text
+                  style: const TextStyle(
+                    fontSize: 14, // Larger for debugging
+                    color: Colors.white, // White on red background
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
+              ),
             ],
           ),
         ),
@@ -224,3 +222,4 @@ class OwnMessageCard extends StatelessWidget {
     );
   }
 }
+    

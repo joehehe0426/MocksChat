@@ -1,3 +1,5 @@
+import 'package:chatapp/Model/MessageModel.dart';
+
 class ChatModel {
   String? name;
   String? icon;
@@ -8,6 +10,9 @@ class ChatModel {
   bool select = false;
   int? id;
   String? profileImage;
+  // In-memory message store (no DB)
+  List<MessageModel>? messages;
+
   ChatModel({
     this.name,
     this.icon,
@@ -18,5 +23,8 @@ class ChatModel {
     this.select = false,
     this.id,
     this.profileImage,
-  });
+    this.messages,
+  }) {
+    messages ??= <MessageModel>[];
+  }
 }

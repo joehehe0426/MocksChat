@@ -6,6 +6,7 @@ class MessageModel {
   String? attachmentType; // 'image', 'document', 'audio', 'video', 'location', 'contact'
   String? attachmentPath; // Path or data for the attachment
   String? attachmentName; // Display name for the attachment
+  String? status; // 'sent', 'delivered', 'read'
   
   MessageModel({
     this.message, 
@@ -14,6 +15,7 @@ class MessageModel {
     this.date,
     this.attachmentType,
     this.attachmentPath,
-    this.attachmentName,
+  this.attachmentName,
+  this.status,
   });
 }

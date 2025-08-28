@@ -1,73 +1,693 @@
+import 'package:flutter/material.dart';
 import 'package:chatapp/Model/ChatModel.dart';
 import 'package:chatapp/Model/MessageModel.dart';
-import 'package:chatapp/database/DatabaseHelper.dart';
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
-import 'package:flutter/material.dart';
+import 'package:chatapp/CustomUI/DateHeader.dart';
 
+/// Clean, single implementation of the chat screen using in-memory messages.
 class IndividualPage extends StatefulWidget {
   final ChatModel? chatModel;
-  final ChatModel? sourchat;
-
-  const IndividualPage({
-    Key? key,
-    this.chatModel,
-    this.sourchat,
-  }) : super(key: key);
+  const IndividualPage({Key? key, this.chatModel}) : super(key: key);
 
   @override
-  _IndividualPageState createState() => _IndividualPageState();
+  State<IndividualPage> createState() => _IndividualPageState();
 }
 
 class _IndividualPageState extends State<IndividualPage> {
-  // UI State
-  bool _showEmojiPicker = false;
-  FocusNode _messageFocusNode = FocusNode();
-  bool _isSendButtonActive = false;
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final FocusNode _focusNode = FocusNode();
 
-  // Message State
-  List<MessageModel> _chatItems = [];
+  List<MessageModel> _messages = [];
+  bool _isSendActive = false;
 
   @override
   void initState() {
     super.initState();
-    _setupFocusListener();
-    _loadChatHistory();
+    _messages = List<MessageModel>.from(widget.chatModel?.messages ?? []);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
   }
 
   @override
   void dispose() {
     _messageController.dispose();
-    _messageFocusNode.dispose();
     _scrollController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
-  void _setupFocusListener() {
-    _messageFocusNode.addListener(() {
-      if (_messageFocusNode.hasFocus && mounted) {
-        setState(() => _showEmojiPicker = false);
+  void _scrollToBottom() {
+    if (!_scrollController.hasClients) return;
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeOut,
+    );
+  }
+
+  String _nowTime() {
+    final now = DateTime.now();
+    return '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+  }
+
+  List<dynamic> _withDateHeaders(List<MessageModel> src) {
+    final List<dynamic> out = [];
+    String? current;
+    for (final m in src) {
+      final d = m.date ?? DateTime.now().toIso8601String().split('T')[0];
+      if (current != d) {
+        current = d;
+        out.add(d);
       }
+      out.add(m);
+    }
+    return out;
+  }
+
+  void _sendMessage() {
+    final text = _messageController.text.trim();
+    if (text.isEmpty) return;
+
+    final msg = MessageModel(
+      type: 'source',
+      message: text,
+      time: _nowTime(),
+      date: DateTime.now().toIso8601String().split('T')[0],
+      status: 'sent',
+    );
+
+    setState(() {
+      _messages.add(msg);
+      if (widget.chatModel != null) widget.chatModel!.messages = List<MessageModel>.from(_messages);
+      _isSendActive = false;
     });
+
+    _messageController.clear();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final maxSource = (screenWidth * 0.65).clamp(0.0, 320.0);
+    final maxDest = (screenWidth * 0.78).clamp(0.0, 320.0);
+
+    final rows = _withDateHeaders(_messages);
+
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.chatModel?.name ?? 'Chat'), backgroundColor: const Color(0xFF075E54)),
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(image: const AssetImage('assets/whatsapp_Back.png'), fit: BoxFit.cover, opacity: 0.95),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  itemCount: rows.length,
+                  itemBuilder: (ctx, i) {
+                    final row = rows[i];
+                    if (row is String) return DateHeader(date: row);
+
+                    final m = row as MessageModel;
+                    final isSource = m.type == 'source';
+                    final maxW = isSource ? maxSource : maxDest;
+
+                    return Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      child: Row(
+                        mainAxisAlignment: isSource ? MainAxisAlignment.end : MainAxisAlignment.start,
+                        children: [
+                          ConstrainedBox(
+                            constraints: BoxConstraints(maxWidth: maxW),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: isSource ? const Color(0xFFdcf8c6) : Colors.white,
+                                borderRadius: isSource
+                                    ? const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12), bottomLeft: Radius.circular(12), bottomRight: Radius.circular(4))
+                                    : const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12), bottomLeft: Radius.circular(4), bottomRight: Radius.circular(12)),
+                                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 1, offset: const Offset(0, 1))],
+                              ),
+                              child: Stack(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 18.0),
+                                    child: Text(m.message ?? '', style: const TextStyle(fontSize: 14, height: 1.18)),
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                                      Text(m.time ?? '', style: TextStyle(fontSize: 11, color: Colors.grey[600])),
+                                      if (isSource) const SizedBox(width: 6),
+                                      if (isSource)
+                                        Icon(
+                                          m.status == 'read' ? Icons.done_all : Icons.done,
+                                          size: 14,
+                                          color: m.status == 'read' ? Colors.blue : Colors.grey[600],
+                                        )
+                                    ]),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                color: Colors.transparent,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(28)),
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Row(children: [
+                          const Icon(Icons.emoji_emotions_outlined, color: Colors.grey, size: 22),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: TextField(
+                              controller: _messageController,
+                              focusNode: _focus_node,
+                              decoration: const InputDecoration(border: InputBorder.none, hintText: 'Message', isCollapsed: true, contentPadding: EdgeInsets.symmetric(vertical: 8)),
+                              onChanged: (v) => setState(() => _isSendActive = v.trim().isNotEmpty),
+                              maxLines: null,
+                            ),
+                          ),
+                        ]),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Container(
+                      height: 48,
+                      width: 48,
+                      decoration: const BoxDecoration(color: Color(0xFF075E54), shape: BoxShape.circle),
+                      child: IconButton(
+                        onPressed: _isSendActive ? _sendMessage : null,
+                        icon: Icon(_isSendActive ? Icons.send : Icons.mic, color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+    _scrollController.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _scrollToBottom() {
+    if (!_scroll_controller.hasClients) return;
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeOut,
+    );
+  }
+
+  String _nowTime() {
+    final now = DateTime.now();
+    return '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+  }
+
+  List<dynamic> _withDateHeaders(List<MessageModel> src) {
+    final List<dynamic> out = [];
+    String? current;
+    for (final m in src) {
+      final d = m.date ?? DateTime.now().toIso8601String().split('T')[0];
+      if (current != d) {
+        current = d;
+        out.add(d);
+      }
+      out.add(m);
+    }
+    return out;
+  }
+
+  void _sendMessageInternal() {
+    final text = _messageController.text.trim();
+    if (text.isEmpty) return;
+
+    final msg = MessageModel(
+      type: 'source',
+      message: text,
+      time: _nowTime(),
+      date: DateTime.now().toIso8601String().split('T')[0],
+      status: 'sent',
+    );
+
+    setState(() {
+      _messages.add(msg);
+      if (widget.chatModel != null) widget.chatModel!.messages = List<MessageModel>.from(_messages);
+      _isSendActive = false;
+    });
+
+    _messageController.clear();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final maxSource = (screenWidth * 0.65).clamp(0.0, 320.0);
+    final maxDest = (screenWidth * 0.78).clamp(0.0, 320.0);
+
+    final rows = _withDateHeaders(_messages);
+
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.chatModel?.name ?? 'Chat'), backgroundColor: const Color(0xFF075E54)),
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(image: const AssetImage('assets/whatsapp_Back.png'), fit: BoxFit.cover, opacity: 0.95),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  itemCount: rows.length,
+                  itemBuilder: (ctx, i) {
+                    final row = rows[i];
+                    if (row is String) return DateHeader(date: row);
+
+                    final m = row as MessageModel;
+                    final isSource = m.type == 'source';
+                    final maxW = isSource ? maxSource : maxDest;
+
+                    return Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      child: Row(
+                        mainAxisAlignment: isSource ? MainAxisAlignment.end : MainAxisAlignment.start,
+                        children: [
+                          ConstrainedBox(
+                            constraints: BoxConstraints(maxWidth: maxW),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: isSource ? const Color(0xFFdcf8c6) : Colors.white,
+                                borderRadius: isSource
+                                    ? const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12), bottomLeft: Radius.circular(12), bottomRight: Radius.circular(4))
+                                    : const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12), bottomLeft: Radius.circular(4), bottomRight: Radius.circular(12)),
+                                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 1, offset: const Offset(0, 1))],
+                              ),
+                              child: Stack(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 18.0),
+                                    child: Text(m.message ?? '', style: const TextStyle(fontSize: 14, height: 1.18)),
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                                      Text(m.time ?? '', style: TextStyle(fontSize: 11, color: Colors.grey[600])),
+                                      if (isSource) const SizedBox(width: 6),
+                                      if (isSource)
+                                        Icon(
+                                          m.status == 'read' ? Icons.done_all : Icons.done,
+                                          size: 14,
+                                          color: m.status == 'read' ? Colors.blue : Colors.grey[600],
+                                        )
+                                    ]),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              // Input bar
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                color: Colors.transparent,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(28)),
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Row(children: [
+                          const Icon(Icons.emoji_emotions_outlined, color: Colors.grey, size: 22),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: TextField(
+                              controller: _messageController,
+                              focusNode: _focusNode,
+                              decoration: const InputDecoration(border: InputBorder.none, hintText: 'Message', isCollapsed: true, contentPadding: EdgeInsets.symmetric(vertical: 8)),
+                              onChanged: (v) => setState(() => _isSendActive = v.trim().isNotEmpty),
+                              maxLines: null,
+                            ),
+                          ),
+                        ]),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Container(
+                      height: 48,
+                      width: 48,
+                      decoration: const BoxDecoration(color: Color(0xFF075E54), shape: BoxShape.circle),
+                      child: IconButton(
+                        onPressed: _isSendActive ? _sendMessageInternal : null,
+                        icon: Icon(_isSendActive ? Icons.send : Icons.mic, color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+import 'package:flutter/material.dart';
+import 'package:chatapp/Model/ChatModel.dart';
+import 'package:chatapp/Model/MessageModel.dart';
+import 'package:chatapp/database/DatabaseHelper.dart';
+import 'package:chatapp/CustomUI/DateHeader.dart';
+
+class IndividualPage extends StatefulWidget {
+  final ChatModel? chatModel;
+  const IndividualPage({Key? key, this.chatModel}) : super(key: key);
+  @override
+  State<IndividualPage> createState() => _IndividualPageState();
+}
+
+class _IndividualPageState extends State<IndividualPage> {
+  final TextEditingController _controller = TextEditingController();
+  final ScrollController _scroll = ScrollController();
+  final FocusNode _focus = FocusNode();
+  List<MessageModel> _items = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    try {
+      if (widget.chatModel?.id != null) {
+        final db = DatabaseHelper();
+        final msgs = await db.getMessages(widget.chatModel!.id!);
+        setState(() => _items = msgs);
+        import 'package:flutter/material.dart';
+        import 'package:chatapp/Model/ChatModel.dart';
+        import 'package:chatapp/Model/MessageModel.dart';
+        import 'package:chatapp/CustomUI/DateHeader.dart';
+
+        /// Clean, in-memory-only chat screen.
+        /// - Uses `widget.chatModel?.messages` if present as the message source.
+        /// - Does NOT call any database helpers (per-user request).
+        class IndividualPage extends StatefulWidget {
+          final ChatModel? chatModel;
+
+          const IndividualPage({Key? key, this.chatModel}) : super(key: key);
+
+          @override
+          State<IndividualPage> createState() => _IndividualPageState();
+        }
+
+        class _IndividualPageState extends State<IndividualPage> {
+          final TextEditingController _messageController = TextEditingController();
+          final ScrollController _scrollController = ScrollController();
+          final FocusNode _focusNode = FocusNode();
+
+          List<MessageModel> _messages = [];
+          bool _isSendActive = false;
+
+          @override
+          void initState() {
+            super.initState();
+          _messages = List<MessageModel>.from(widget.chatModel?.messages ?? []);
+            _focusNode.addListener(() {});
+            WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+          }
+
+          @override
+          void dispose() {
+          _messageController.dispose();
+            _scrollController.dispose();
+            _focusNode.dispose();
+            super.dispose();
+          }
+
+          void _scrollToBottom() {
+            if (!_scrollController.hasClients) return;
+            _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOut,
+            );
+          }
+
+          String _nowTime() {
+            final now = DateTime.now();
+            return '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+          }
+
+          List<dynamic> _withDateHeaders(List<MessageModel> src) {
+            final List<dynamic> out = [];
+            String? current;
+            for (final m in src) {
+              final d = m.date ?? DateTime.now().toIso8601String().split('T')[0];
+              if (current != d) {
+                current = d;
+                out.add(d);
+              }
+              out.add(m);
+            }
+            return out;
+          }
+
+          void _sendMessage() {
+            final text = _messageController.text.trim();
+            if (text.isEmpty) return;
+
+          final msg = MessageModel(
+              type: 'source',
+              message: text,
+              time: _nowTime(),
+              date: DateTime.now().toIso8601String().split('T')[0],
+              status: 'sent',
+            );
+
+            setState(() {
+              _messages.add(msg);
+              // keep the chatModel in-sync so other screens reading it will see the change
+              if (widget.chatModel != null) widget.chatModel!.messages = List<MessageModel>.from(_messages);
+              _isSendActive = false;
+            });
+
+            _messageController.clear();
+            WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+          }
+
+          @override
+          Widget build(BuildContext context) {
+          final screenWidth = MediaQuery.of(context).size.width;
+            final maxSource = (screenWidth * 0.65).clamp(0.0, 320.0);
+            final maxDest = (screenWidth * 0.78).clamp(0.0, 320.0);
+
+            final rows = _withDateHeaders(_messages);
+
+            return Scaffold(
+          appBar: AppBar(title: Text(widget.chatModel?.name ?? 'Chat'), backgroundColor: const Color(0xFF075E54)),
+              body: Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(image: const AssetImage('assets/whatsapp_Back.png'), fit: BoxFit.cover, opacity: 0.95),
+                ),
+                child: SafeArea(
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: ListView.builder(
+                          controller: _scrollController,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          itemCount: rows.length,
+                          itemBuilder: (ctx, i) {
+                            final row = rows[i];
+                            if (row is String) return DateHeader(date: row);
+
+                            final m = row as MessageModel;
+                            final isSource = m.type == 'source';
+                            final maxW = isSource ? maxSource : maxDest;
+
+                            return Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              child: Row(
+                                mainAxisAlignment: isSource ? MainAxisAlignment.end : MainAxisAlignment.start,
+                                children: [
+                                  ConstrainedBox(
+                                    constraints: BoxConstraints(maxWidth: maxW),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                      decoration: BoxDecoration(
+                                        color: isSource ? const Color(0xFFdcf8c6) : Colors.white,
+                                        borderRadius: isSource
+                                            ? const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12), bottomLeft: Radius.circular(12), bottomRight: Radius.circular(4))
+                                            : const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12), bottomLeft: Radius.circular(4), bottomRight: Radius.circular(12)),
+                                        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 1, offset: const Offset(0, 1))],
+                                      ),
+                                      child: Stack(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(bottom: 18.0),
+                                            child: Text(m.message ?? '', style: const TextStyle(fontSize: 14, height: 1.18)),
+                                          ),
+                                          Positioned(
+                                            bottom: 0,
+                                            right: 0,
+                                            child: Row(mainAxisSize: MainAxisSize.min, children: [
+                                              Text(m.time ?? '', style: TextStyle(fontSize: 11, color: Colors.grey[600])),
+                                              if (isSource) const SizedBox(width: 6),
+                                              if (isSource)
+                                                Icon(
+                                                  m.status == 'read' ? Icons.done_all : Icons.done,
+                                                  size: 14,
+                                                  color: m.status == 'read' ? Colors.blue : Colors.grey[600],
+                                                )
+                                            ]),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+
+                      // Input bar
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                        color: Colors.transparent,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(28)),
+                                padding: const EdgeInsets.symmetric(horizontal: 12),
+                                child: Row(children: [
+                                  const Icon(Icons.emoji_emotions_outlined, color: Colors.grey, size: 22),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: TextField(
+                                      controller: _messageController,
+                                      focusNode: _focusNode,
+                                      decoration: const InputDecoration(border: InputBorder.none, hintText: 'Message', isCollapsed: true, contentPadding: EdgeInsets.symmetric(vertical: 8)),
+                                      onChanged: (v) => setState(() => _isSendActive = v.trim().isNotEmpty),
+                                      maxLines: null,
+                                    ),
+                                  ),
+                                ]),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Container(
+                              height: 48,
+                              width: 48,
+                              decoration: const BoxDecoration(color: Color(0xFF075E54), shape: BoxShape.circle),
+                              child: IconButton(
+                                onPressed: _isSendActive ? _sendMessage : null,
+                                icon: Icon(_isSendActive ? Icons.send : Icons.mic, color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }
+
+          void _sendMessage() {
+            _sendMessageInternal();
+          }
+
+          void _sendMessageInternal() {
+            final text = _messageController.text.trim();
+            if (text.isEmpty) return;
+
+            final msg = MessageModel(
+              type: 'source',
+              message: text,
+              time: _nowTime(),
+              date: DateTime.now().toIso8601String().split('T')[0],
+              status: 'sent',
+            );
+
+            setState(() {
+              _messages.add(msg);
+              if (widget.chatModel != null) widget.chatModel!.messages = List<MessageModel>.from(_messages);
+              _isSendActive = false;
+            });
+
+            _messageController.clear();
+            WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+          }
+        }
+
+  }
+
+  String _getCurrentTime() {
+    final now = DateTime.now();
+    return '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+  }
+
+  List<dynamic> _getMessageListWithHeaders() {
+    List<dynamic> result = [];
+    String? currentDate;
+    for (MessageModel message in _chatItems) {
+      String messageDate = message.date ?? DateTime.now().toIso8601String().split('T')[0];
+      if (currentDate != messageDate) {
+        currentDate = messageDate;
+        result.add(messageDate);
+      }
+      result.add(message);
+    }
+    return result;
   }
 
   Future<void> _sendMessage(String messageContent) async {
     if (messageContent.trim().isEmpty) return;
-
     final newMessage = MessageModel(
       type: 'source',
       message: messageContent.trim(),
       time: _getCurrentTime(),
       date: DateTime.now().toIso8601String().split('T')[0],
+  status: 'sent',
     );
 
-    // Add to local state
-    setState(() {
-      _chatItems.add(newMessage);
-    });
+    setState(() => _chatItems.add(newMessage));
 
-    // Save to database
     try {
       if (widget.chatModel?.id != null) {
         final databaseHelper = DatabaseHelper();
@@ -82,212 +702,50 @@ class _IndividualPageState extends State<IndividualPage> {
     _scrollToBottom();
   }
 
-  void _scrollToBottom() {
-    if (_scrollController.hasClients && mounted) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    }
-  }
 
-  String _getCurrentTime() {
-    final now = DateTime.now();
-    return '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
-  }
-
-  void _toggleEmojiPicker() {
-    setState(() => _showEmojiPicker = !_showEmojiPicker);
-    if (!_showEmojiPicker) {
-      _messageFocusNode.requestFocus();
-    }
-  }
-
-  // Load chat history from database
-  Future<void> _loadChatHistory() async {
-    try {
-      if (widget.chatModel?.id != null) {
-        final databaseHelper = DatabaseHelper();
-        final messages = await databaseHelper.getMessages(widget.chatModel!.id!);
-        
-        if (mounted) {
-          setState(() {
-            _chatItems = messages;
-          });
-          
-          // Scroll to bottom after loading messages
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            _scrollToBottom();
-          });
-        }
-      }
-    } catch (e) {
-      print('Error loading chat history: $e');
-    }
-  }
 
   Widget _buildMessageInput() {
+    // WhatsApp-like input: rounded pill + circular send/mic button
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      color: Colors.transparent,
       child: Row(
         children: [
           Expanded(
             child: Container(
-              height: 35,
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(25),
-              ),
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(28)),
+              padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Row(
                 children: [
-                  GestureDetector(
-                    onTap: _toggleEmojiPicker,
-                    child: Container(
-                      margin: const EdgeInsets.only(left: 6),
-                      child: Icon(
-                        Icons.emoji_emotions,
-                        color: Colors.grey[500],
-                        size: 25,
-                      ),
-                    ),
-                  ),
+                  const Icon(Icons.emoji_emotions_outlined, color: Colors.grey, size: 22),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: TextField(
                       controller: _messageController,
                       focusNode: _messageFocusNode,
-                      textAlignVertical: TextAlignVertical.center,
-                      decoration: const InputDecoration(
-                        hintText: "Message",
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(horizontal: 4),
-                      ),
-                      onChanged: (value) {
-                        setState(() => _isSendButtonActive = value.trim().isNotEmpty);
-                      },
-                      onSubmitted: (value) => _sendMessage(value),
-                      style: const TextStyle(fontSize: 16),
+                      decoration: const InputDecoration(border: InputBorder.none, hintText: 'Message', isCollapsed: true, contentPadding: EdgeInsets.symmetric(vertical: 8)),
+                      onChanged: (v) => setState(() => _isSendButtonActive = v.trim().isNotEmpty),
                       maxLines: null,
-                      keyboardType: TextInputType.multiline,
                     ),
                   ),
+                  const SizedBox(width: 8),
+                  // Attachment / voice icons could go here if desired
                 ],
               ),
             ),
           ),
           const SizedBox(width: 10),
           Container(
-            height: 50,
-            width: 50,
-            decoration: const BoxDecoration(
-              color: Color(0xFF25D366),
-              shape: BoxShape.circle,
-            ),
+            height: 48,
+            width: 48,
+            decoration: BoxDecoration(color: const Color(0xFF075E54), shape: BoxShape.circle),
             child: IconButton(
-              onPressed: _isSendButtonActive
-                  ? () => _sendMessage(_messageController.text)
-                  : null,
-              icon: Icon(
-                _isSendButtonActive ? Icons.send : Icons.mic,
-                color: Colors.white,
-                size: 24,
-              ),
+              onPressed: _isSendButtonActive ? () => _sendMessage(_messageController.text) : null,
+              icon: Icon(_isSendButtonActive ? Icons.send : Icons.mic, color: Colors.white),
             ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildMessageList() {
-    return Expanded(
-      child: ListView.builder(
-        shrinkWrap: true,
-        controller: _scrollController,
-        itemCount: _chatItems.length + 1,
-        itemBuilder: (context, index) {
-          if (index == _chatItems.length) {
-            return const SizedBox(height: 100);
-          }
-
-          final message = _chatItems[index];
-          return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            child: Row(
-              mainAxisAlignment: message.type == 'source' 
-                  ? MainAxisAlignment.end 
-                  : MainAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: message.type == 'source' 
-                        ? const Color(0xFF25D366) 
-                        : Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Show image if attachment exists
-                      if (message.attachmentType == 'image' && message.attachmentPath != null)
-                        Container(
-                          margin: const EdgeInsets.only(bottom: 4),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.asset(
-                              message.attachmentPath!,
-                              width: 200,
-                              height: 150,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Container(
-                                  width: 200,
-                                  height: 150,
-                                  color: Colors.grey[300],
-                                  child: const Icon(Icons.image_not_supported, color: Colors.grey),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                      // Show message text
-                      if (message.message != null && message.message!.isNotEmpty)
-                        Text(
-                          message.message!,
-                          style: TextStyle(
-                            color: message.type == 'source' ? Colors.white : Colors.black,
-                            fontSize: 16,
-                          ),
-                        ),
-                      // Show attachment name if exists
-                      if (message.attachmentName != null && message.attachmentName!.isNotEmpty)
-                        Text(
-                          message.attachmentName!,
-                          style: TextStyle(
-                            color: message.type == 'source' ? Colors.white70 : Colors.grey[600],
-                            fontSize: 12,
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildEmojiPicker() {
-    return EmojiPicker(
-      onEmojiSelected: (_, emoji) {
-        setState(() {
-          _messageController.text += emoji.emoji;
-          _isSendButtonActive = _messageController.text.trim().isNotEmpty;
-        });
-      },
     );
   }
 
@@ -295,92 +753,141 @@ class _IndividualPageState extends State<IndividualPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF075E54),
-        elevation: 0,
-        leadingWidth: 75,
-        titleSpacing: 0,
-        leading: InkWell(
-          onTap: () => Navigator.pop(context),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.arrow_back, size: 24),
-              const SizedBox(width: 8),
-              CircleAvatar(
-                radius: 20,
-                backgroundColor: Colors.grey[300],
-                backgroundImage: widget.chatModel?.profileImage != null && widget.chatModel!.profileImage!.isNotEmpty
-                    ? AssetImage(widget.chatModel!.profileImage!)
-                    : null,
-                child: widget.chatModel?.profileImage == null || widget.chatModel!.profileImage!.isEmpty
-                    ? Text(
-                        widget.chatModel?.name?.substring(0, 1).toUpperCase() ?? '?',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      )
-                    : null,
-              ),
-            ],
-          ),
-        ),
-        title: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                widget.chatModel?.name ?? 'Unknown Contact',
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black,
-                ),
-              ),
-              const Text(
-                "last seen today at 12:05",
-                style: TextStyle(fontSize: 13, color: Colors.grey),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.videocam_outlined),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: const Icon(Icons.call_outlined),
-            onPressed: () {},
-          ),
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert),
-            onSelected: (value) {},
-            itemBuilder: (_) => [
-              const PopupMenuItem(child: Text("View Contact"), value: "View Contact"),
-              const PopupMenuItem(child: Text("Media"), value: "Media"),
-              const PopupMenuItem(child: Text("Search"), value: "Search"),
-            ],
-          ),
-        ],
+        title: Text(widget.chatModel?.name ?? 'Chat'),
+        backgroundColor: const Color(0xFF075E54),
       ),
+      // WhatsApp-like wallpaper background (assets/whatsapp_Back.png is included in repo)
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("assets/whatsapp_Back.png"),
+            image: AssetImage('assets/whatsapp_Back.png'),
             fit: BoxFit.cover,
+            opacity: 0.95,
           ),
         ),
         child: SafeArea(
-          bottom: true,
           child: Column(
             children: [
+              // message list (expanded)
               _buildMessageList(),
+              // input box
               _buildMessageInput(),
-              if (_showEmojiPicker) _buildEmojiPicker(),
             ],
           ),
         ),
       ),
     );
   }
-}
+
+  Widget _buildMessageList() {
+  final screenWidth = MediaQuery.of(context).size.width;
+  // Per-side width caps to get WhatsApp-like feel
+  final maxBubbleWidthSource = (screenWidth * 0.65).clamp(0.0, 320.0);
+  final maxBubbleWidthDest = (screenWidth * 0.78).clamp(0.0, 320.0);
+
+    return Expanded(
+      child: _chatItems.isEmpty
+          ? const Center(child: Text('No messages yet'))
+          : ListView.builder(
+              controller: _scrollController,
+              itemCount: _getMessageListWithHeaders().length,
+              itemBuilder: (context, index) {
+                final item = _getMessageListWithHeaders()[index];
+                if (item is String) return DateHeader(date: item);
+
+                final message = item as MessageModel;
+                final isSource = message.type == 'source';
+
+                return Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                  child: Row(
+                    mainAxisAlignment: isSource ? MainAxisAlignment.end : MainAxisAlignment.start,
+                    children: [
+                      Flexible(
+                        child: Align(
+                          alignment: isSource ? Alignment.centerRight : Alignment.centerLeft,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: isSource ? maxBubbleWidthSource : maxBubbleWidthDest),
+                child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: isSource ? const Color(0xFFdcf8c6) : Colors.white,
+                                borderRadius: isSource
+                                    ? const BorderRadius.only(
+                                        topLeft: Radius.circular(12),
+                                        topRight: Radius.circular(12),
+                                        bottomLeft: Radius.circular(12),
+                                        bottomRight: Radius.circular(4),
+                                      )
+                                    : const BorderRadius.only(
+                                        topLeft: Radius.circular(12),
+                                        topRight: Radius.circular(12),
+                                        bottomLeft: Radius.circular(4),
+                                        bottomRight: Radius.circular(12),
+                                      ),
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: isSource ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                                children: [
+                                  if (message.attachmentType == 'image' && message.attachmentPath != null)
+                                    Container(
+                                      margin: const EdgeInsets.only(bottom: 6),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Image.asset(
+                                          message.attachmentPath!,
+                                          width: (isSource ? maxBubbleWidthSource : maxBubbleWidthDest) * 0.9,
+                                          height: (isSource ? maxBubbleWidthSource : maxBubbleWidthDest) * 0.45,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+
+                                  if (message.message != null && message.message!.isNotEmpty)
+                                    Stack(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(bottom: 18.0),
+                                          child: Text(
+                                            message.message!,
+                                            style: const TextStyle(fontSize: 14, height: 1.2),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          bottom: 0,
+                                          right: 0,
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                message.time ?? '',
+                                                style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                                              ),
+                                              if (isSource) const SizedBox(width: 6),
+                                              if (isSource)
+                                                Icon(
+                                                  message.status == 'read'
+                                                      ? Icons.done_all
+                                                      : (message.status == 'delivered' ? Icons.done_all : Icons.done),
+                                                  size: 12,
+                                                  color: message.status == 'read' ? Colors.blue : Colors.grey[600],
+                                                ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+    );
+  }

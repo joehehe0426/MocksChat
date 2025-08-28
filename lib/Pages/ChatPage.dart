@@ -1,9 +1,7 @@
 import 'package:chatapp/CustomUI/CustomCard.dart';
 import 'package:chatapp/Screens/IndividualPage.dart';
 import 'package:chatapp/Model/ChatModel.dart';
-import 'package:chatapp/Model/MessageModel.dart';
-import 'package:chatapp/database/DatabaseHelper.dart';
-import 'package:chatapp/database/DatabaseSeeder.dart';
+// Database removed: using in-memory messages on ChatModel
 import 'package:flutter/material.dart';
 
 class ChatPage extends StatefulWidget {
@@ -16,37 +14,17 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  final DatabaseHelper _databaseHelper = DatabaseHelper();
   List<ChatModel> updatedChatModels = [];
   bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    print('=== CHAT PAGE INIT STATE ===');
-    _initializeDatabaseAndLoadMessages();
+  print('=== CHAT PAGE INIT STATE ===');
+  // no DB: just load from provided models
+  _loadLatestMessages();
   }
-
-  Future<void> _initializeDatabaseAndLoadMessages() async {
-    try {
-      // Initialize database without clearing data
-      await _databaseHelper.database;
-      print('Database initialized');
-      
-      // Check if database needs seeding
-      if (await DatabaseSeeder.needsSeeding()) {
-        await DatabaseSeeder.seedDatabase();
-      }
-      
-      // Print current database contents for debugging
-      await _databaseHelper.printDatabaseContents();
-    } catch (e) {
-      print('Error initializing database: $e');
-    }
-    
-    // Load messages from database and original models
-    await _loadLatestMessages();
-  }
+  
 
 
 
@@ -69,54 +47,32 @@ class _ChatPageState extends State<ChatPage> {
       isLoading = true;
     });
     
-    print('=== LOADING LATEST MESSAGES ===');
-    print('Number of chat models: ${widget.chatmodels?.length ?? 0}');
-    
+    print('=== LOADING LATEST MESSAGES (in-memory) ===');
     List<ChatModel> updatedModels = [];
-    
     if (widget.chatmodels != null && widget.chatmodels!.isNotEmpty) {
       for (ChatModel chatModel in widget.chatmodels!) {
         print('Processing chat: ${chatModel.name} (ID: ${chatModel.id})');
-        
-        try {
-          // Get the latest message from database for this chat
-          List<MessageModel> messages = await _databaseHelper.getMessages(chatModel.id ?? 0);
-          
-          if (messages.isNotEmpty) {
-            // Use the latest message from database
-            MessageModel latestMessage = messages.last;
-            print('📱 Latest DB message for ${chatModel.name}: ${latestMessage.message}');
-            
-            // Create updated chat model with latest message
-            ChatModel updatedChat = ChatModel(
-              name: chatModel.name,
-              id: chatModel.id,
-              currentMessage: latestMessage.message,
-              time: latestMessage.time,
-              icon: chatModel.icon,
-              isGroup: chatModel.isGroup,
-              status: chatModel.status,
-              profileImage: chatModel.profileImage,
-            );
-            updatedModels.add(updatedChat);
-          } else {
-            // No messages in database, use original
-            print('📱 No DB messages for ${chatModel.name}, using original: ${chatModel.currentMessage}');
-            updatedModels.add(chatModel);
-          }
-        } catch (e) {
-          print('Error loading messages for ${chatModel.name}: $e');
-          // Fallback to original message
+        // Use last message from in-memory list if present
+        final msgs = chatModel.messages ?? [];
+        if (msgs.isNotEmpty) {
+          final last = msgs.last;
+          updatedModels.add(ChatModel(
+            name: chatModel.name,
+            id: chatModel.id,
+            currentMessage: last.message,
+            time: last.time,
+            icon: chatModel.icon,
+            isGroup: chatModel.isGroup,
+            status: chatModel.status,
+            profileImage: chatModel.profileImage,
+            messages: msgs,
+          ));
+        } else {
           updatedModels.add(chatModel);
         }
       }
     }
-    
-    print('Final updated models count: ${updatedModels.length}');
-    for (var model in updatedModels) {
-      print('Final message for ${model.name}: ${model.currentMessage}');
-    }
-    
+
     setState(() {
       updatedChatModels = updatedModels;
       isLoading = false;
@@ -204,7 +160,10 @@ class _ChatPageState extends State<ChatPage> {
                                   sourchat: widget.sourchat,
                                 ),
                               ),
-                            );
+                            ).then((_) {
+                              // reload latest messages when returning from the chat
+                              _loadLatestMessages();
+                            });
                           },
                         );
                       },

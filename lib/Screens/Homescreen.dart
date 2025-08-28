@@ -6,6 +6,7 @@ import 'package:chatapp/Screens/EditModeScreen.dart';
 import 'package:chatapp/Screens/ContactSelectionScreen.dart';
 // import 'package:chatapp/database/DatabaseHelper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'dart:io';
 import 'SettingsPage.dart';
 import 'package:chatapp/database/MockDataLoader.dart';
@@ -83,14 +84,17 @@ class _HomescreenState extends State<Homescreen> {
   }
 
   Widget _buildLoading() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
-          CircularProgressIndicator(color: _primaryColor),
-          SizedBox(height: 20),
-          Text('Loading chats...', style: TextStyle(fontSize: 16)),
-        ],
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            CircularProgressIndicator(color: _primaryColor, strokeWidth: 2),
+            SizedBox(height: 10),
+            Text('Loading...', style: TextStyle(fontSize: 14, color: _darkGray)),
+          ],
+        ),
       ),
     );
   }
@@ -180,15 +184,17 @@ class _HomescreenState extends State<Homescreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.edit, color: _primaryColor),
+            icon: const Icon(Icons.edit, color: Colors.white),
             tooltip: 'Edit Mode',
             onPressed: () => _navigateToEditMode(),
           ),
+          SizedBox(width: 2),
           IconButton(
-            icon: const Icon(Icons.camera_alt, color: _primaryColor),
+            icon: const Icon(Icons.camera_alt_outlined, color: _primaryColor),
             tooltip: 'Camera',
             onPressed: () => _navigateToCamera(),
           ),
+          SizedBox(width: 2),
           IconButton(
             icon: const Icon(Icons.search, color: _primaryColor),
             tooltip: 'Search',
@@ -331,20 +337,20 @@ class _HomescreenState extends State<Homescreen> {
       unselectedItemColor: Colors.grey[600],
       currentIndex: _selectedIndex,
       onTap: (index) => setState(() => _selectedIndex = index),
-      items: const [
-        BottomNavigationBarItem(
+      items: [
+        const BottomNavigationBarItem(
           icon: Icon(Icons.chat),
           label: 'Chats',
         ),
-        BottomNavigationBarItem(
+        const BottomNavigationBarItem(
           icon: Icon(Icons.camera_alt),
           label: 'Updates',
         ),
-        BottomNavigationBarItem(
+        const BottomNavigationBarItem(
           icon: Icon(Icons.people),
           label: 'Communities',
         ),
-        BottomNavigationBarItem(
+        const BottomNavigationBarItem(
           icon: Icon(Icons.call),
           label: 'Calls',
         ),

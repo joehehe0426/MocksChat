@@ -20,7 +20,7 @@ class DatabaseHelper {
     String path = join(await getDatabasesPath(), 'whatsapp_clone.db');
     return await openDatabase(
       path,
-      version: 3,
+      version: 4,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
       singleInstance: true,
@@ -40,7 +40,8 @@ class DatabaseHelper {
         timestamp INTEGER NOT NULL,
         attachmentType TEXT,
         attachmentPath TEXT,
-        attachmentName TEXT
+        attachmentName TEXT,
+        status TEXT
       )
     ''');
 
@@ -76,7 +77,7 @@ class DatabaseHelper {
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     // For this migration, we want to remove AUTOINCREMENT from contacts.id.
     // SQLite doesn't support altering primary key directly; we'll recreate the table.
-    if (oldVersion < 2) {
+  if (oldVersion < 2) {
       await db.transaction((txn) async {
         // Create new table without AUTOINCREMENT
         await txn.execute('''
@@ -101,6 +102,17 @@ class DatabaseHelper {
         await txn.execute('ALTER TABLE contacts_new RENAME TO contacts');
       });
     }
+    // Add status column to messages in version 4
+    if (oldVersion < 4) {
+      try {
+        await db.execute('ALTER TABLE messages ADD COLUMN status TEXT');
+        // Backfill existing rows with a default value (sent) where status is NULL
+        await db.execute("UPDATE messages SET status = 'sent' WHERE status IS NULL");
+      } catch (e) {
+        // ignore if column already exists or migration fails; log for debugging
+        print('Status column migration skipped or failed: $e');
+      }
+    }
   }
 
   // Insert a new message with error handling
@@ -116,7 +128,8 @@ class DatabaseHelper {
         'timestamp': DateTime.now().millisecondsSinceEpoch,
         'attachmentType': message.attachmentType,
         'attachmentPath': message.attachmentPath,
-        'attachmentName': message.attachmentName,
+  'attachmentName': message.attachmentName,
+  'status': message.status,
       });
     } catch (e) {
       print('Error inserting message: $e');
@@ -146,6 +159,7 @@ class DatabaseHelper {
           attachmentType: maps[i]['attachmentType'],
           attachmentPath: maps[i]['attachmentPath'],
           attachmentName: maps[i]['attachmentName'],
+          status: maps[i]['status'],
         );
       }); // No need to reverse since we're using ASC order
     } catch (e) {
@@ -175,6 +189,7 @@ class DatabaseHelper {
           attachmentType: maps.first['attachmentType'],
           attachmentPath: maps.first['attachmentPath'],
           attachmentName: maps.first['attachmentName'],
+          status: maps.first['status'],
         );
       }
       return null;

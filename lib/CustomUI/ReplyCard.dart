@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 
 class ReplyCard extends StatelessWidget {
   const ReplyCard({
-    Key? key, 
-    this.message, 
-    this.time, 
+    Key? key,
+    this.message,
+    this.time,
     this.attachmentType,
     this.attachmentPath,
     this.attachmentName,
   }) : super(key: key);
-  
+
   final String? message;
   final String? time;
   final String? attachmentType;
   final String? attachmentPath;
   final String? attachmentName;
-  
+
   void _showFullScreenImage(BuildContext context, String imagePath) {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -56,6 +56,7 @@ class ReplyCard extends StatelessWidget {
       ),
     );
   }
+
   Widget _buildAttachment(BuildContext context) {
     if (attachmentType == null || attachmentPath == null) {
       return const SizedBox.shrink();
@@ -156,23 +157,23 @@ class ReplyCard extends StatelessWidget {
         return const SizedBox.shrink();
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Container(
-          margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 8),
-          padding: const EdgeInsets.all(6),
+          margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+          padding: const EdgeInsets.all(10),
           constraints: const BoxConstraints(maxWidth: 250),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(5),
-              topRight: Radius.circular(5),
-              bottomLeft: Radius.circular(5),
-              bottomRight: Radius.circular(5),
+              topLeft: Radius.circular(12),
+              topRight: Radius.circular(12),
+              bottomLeft: Radius.circular(0),
+              bottomRight: Radius.circular(12),
             ),
             boxShadow: const [
               BoxShadow(
@@ -182,54 +183,48 @@ class ReplyCard extends StatelessWidget {
               ),
             ],
           ),
-          child: Stack(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(2.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                                         _buildAttachment(context),
-                    if (message != null && message!.isNotEmpty)
-                      RichText(
-                        text: TextSpan(
-                          children: <TextSpan>[
-                            // Real message
-                            TextSpan(
-                              text: "${message ?? ''}    ",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black87,
-                              ),
-                            ),
-                                // No timestamp
-                          ],
+          child: Container(
+            // Outer container for the message bubble
+            child: Stack(
+              children: [
+                // Main content layer
+                Container(
+                  padding: const EdgeInsets.only(bottom: 20), // Space for timestamp
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildAttachment(context),
+                      if (message != null && message!.isNotEmpty)
+                        Text(
+                          message!,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.black87,
+                          ),
                         ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-                  // Real timestamp positioned at bottom right
+                
+                // Timestamp layer - positioned at bottom right
+                if (time != null)
                   Positioned(
+                    bottom: 0, // Almost touching the bottom
+                    right: 0,  // Small margin from right edge
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: Colors.yellow,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
                       child: Text(
-                        time ?? 'NO TIME',
-                        style: TextStyle(
-                          fontSize: 16,
+                        time!,
+                        style: const TextStyle(
+                          fontSize: 11,
                           color: Colors.red,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w300,
                         ),
                       ),
                     ),
-                    right: -0.0,
-                    bottom: -0.0,
                   ),
-            ],
+              ],
+            ),
           ),
         ),
       ],
